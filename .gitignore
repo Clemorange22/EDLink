@@ -1,3 +1,10 @@
+# EDLink Configuration file
+conf.json
+
+# VSCode Configuration file
+.vscode
+
+node_modules
 # ---> Node
 # Logs
 logs
