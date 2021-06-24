@@ -1,5 +1,5 @@
 const EcoleDirecte = require("../../node_modules/ecoledirecte.js");
-const axios = require('../../node_modules/axios');
+const request = require('request');
 
 const conf = require("../../conf.json");
 const { Account } = require("../../node_modules/ecoledirecte.js");
@@ -21,6 +21,7 @@ module.exports = {
                 console.error("This login did not go well.");
             });
             
+            
             function calcDate(args) {
                 if (args[1]) {
                     if (args[0] == "jour" || args[0] == "j") {
@@ -31,7 +32,7 @@ module.exports = {
                     else if (args[0] == "semaine" || args[0] == "s") {
                         var date = args[1].split("-");
                         var dateDebut = [date[2],date[1],date[0]].join("-");
-                        var dateFin = dateDebut;
+                        var dateFin = [date[2]+5,date[1],date[0]].join("-");
                     }
                 }
                 return [dateDebut, dateFin]
@@ -40,33 +41,33 @@ module.exports = {
             var dateDebut = dates[0];
             var dateFin = dates[1];
 
-            var data = `data={"dateDebut":"${dateDebut}","dateFin":"${dateFin}","avecTrous":false,"token":"${account.token}"}`
-              var config = {
-                method: 'post',
-                url: 'https://api.ecoledirecte.com/v3/E/7857/emploidutemps.awp?verbe=get&',
-                headers: { 
-                  'authority': 'api.ecoledirecte.com', 
-                  'accept': 'application/json, text/plain, */*', 
-                  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36', 
-                  'content-type': 'application/x-www-form-urlencoded', 
-                  'sec-gpc': '1', 
-                  'origin': 'https://www.ecoledirecte.com', 
-                  'sec-fetch-site': 'same-site', 
-                  'sec-fetch-mode': 'cors', 
-                  'sec-fetch-dest': 'empty', 
-                  'referer': 'https://www.ecoledirecte.com/', 
-                  'accept-language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7'
-                },
-                data : data
-              };
-              
-              axios(config)
-              .then(function (response) {
-                console.log(JSON.stringify(response.data));
-              })
-              .catch(function (error) {
-                console.log(error);
-              });
+            var options = {
+              'method': 'POST',
+              'url': `https://api.ecoledirecte.com/v3/${account._raw.typeCompte}/${account.edId}/emploidutemps.awp?verbe=get&`,
+              'headers': {
+                'authority': 'api.ecoledirecte.com',
+                'accept': 'application/json, text/plain, */*',
+                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
+                'content-type': 'application/x-www-form-urlencoded',
+                'sec-gpc': '1',
+                'origin': 'https://www.ecoledirecte.com',
+                'sec-fetch-site': 'same-site',
+                'sec-fetch-mode': 'cors',
+                'sec-fetch-dest': 'empty',
+                'referer': 'https://www.ecoledirecte.com/',
+                'accept-language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7'
+              },
+              form: {
+                'data': `{"dateDebut":"${dateDebut}","dateFin":"${dateFin}","avecTrous":false,"token":"${account.token}"}`
+              }
+            };
+            var emploiDuTemps = {}
+            request(options, function (error, response) {
+              if (error) throw new Error(error);
+              console.log(response.body);
+              var emploiDuTemps = JSON.parse(response.body).data;
+            });
+            
         })();
     },
 };
