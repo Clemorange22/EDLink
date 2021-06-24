@@ -20,9 +20,9 @@ const conf = require('./conf.json');
 const token = conf.discord.token
 const prefix = conf.discord.prefix
 
-client.once('ready', async() => {
-    console.log("Bot ready...");
+client.once('ready', () => {
     client.user.setActivity("ed help", {type : "WATCHING"});
+    console.log("Bot ready...");
 })
 
 client.on('message', message => {
