@@ -25,7 +25,7 @@ module.exports = {
     guildOnly: true,
     memberpermissions:"VIEW_CHANNEL",
     cooldown: 5,
-    usage :'<jour/j/semaine/s> <jour-mois-année> (emploi du temps de la semaine suivante suivante si absent)',
+    usage :'<jour/j/semaine/s> <jour-mois-année> (emploi du temps de la semaine suivante si absent)',
     execute(message, args) {
         (async () => {
             function calcDate(args) { // Calcul des dates de début et de fin du calendrier à demander à école directe
@@ -118,8 +118,8 @@ module.exports = {
                 };
               };
               // Génération de l'emploi du temps en HTML
-              function traduireMoisAnnee(jour){
-                switch (jour){
+              function traduireMoisAnnee(mois){
+                switch (mois){
                   case 'January':
                     return 'Janvier';
                   case 'February':
