@@ -15,7 +15,6 @@ const { MessageAttachment } = require('discord.js')
 const nodeHtmlToImage = require('node-html-to-image')
 
 const conf = require("../../conf.json");
-const { Account } = require("ecoledirecte.js");
 const username = conf.ed.username;
 const password = conf.ed.password;
 
