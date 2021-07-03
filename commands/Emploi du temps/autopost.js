@@ -67,7 +67,8 @@ module.exports = {
                 for(let [clee,element] of Object.entries(autopostsconf[message.guild.id])){
                     reponse.push(`**${clee}** :\nSalon : <#${element.channelID}>, Expression Cron :${element.cronExpression} , mode : ${element.mode}`)
                 }
-                message.lineReply(reponse.join(""))
+                if (reponse.length == 1) return message.lineReply('Aucun post automatique n\'est actuellement actif sur ce serveur !');
+                return message.lineReply(reponse.join(""))
             }
             else if (method == 'delete'){
                 if (!args[0]) return message.lineReply(`Arguments invalides ! Faites ${conf.discord.prefix}help autopost`)
