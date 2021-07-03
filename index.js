@@ -1,9 +1,13 @@
 const fs = require('fs');
-const Discord = require('discord.js');
+const cron = require('node-cron')
+global.conf = require('./conf.json')
 
-const client = new Discord.Client();
-client.commands = new Discord.Collection();
-client.cooldowns = new Discord.Collection();
+const Discord = require('discord.js');
+require('discord-reply');
+
+global.client = new Discord.Client();
+global.client.commands = new Discord.Collection();
+global.client.cooldowns = new Discord.Collection();
 
 const commandFolders = fs.readdirSync('./commands');
 
@@ -11,21 +15,42 @@ for (const folder of commandFolders) {
 	const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
 	for (const file of commandFiles) {
 		const command = require(`./commands/${folder}/${file}`);
-		client.commands.set(command.name, command);
+		global.client.commands.set(command.name, command);
 	}
 }
 
+try {
+    if (fs.existsSync('./autoposts.json')) {
+      global.autopostsconf = require('./autoposts.json')
+    }else{
+       global.autopostsconf = {} 
+    }
+  } catch(err) {
+    console.error(err)
+  }
+if (autopostsconf != {}){
+    global.autoposts = {}
+    for(let [serveur,serveursAutoposts] of Object.entries(autopostsconf)){
+        for(let [autopostName,autopostSettings] of Object.entries(serveursAutoposts)){
+            if(!autoposts[serveur]) autoposts[serveur] = {}
+            autoposts[serveur][autopostName] = cron.schedule(autopostSettings.cronExpression,async ()=>{
+                const emploiDuTemps = require('./commands/Emploi du temps/emploidutemps.js');
+                emploiDuTemps.execute(autopostSettings.channelID,[autopostSettings.mode]);
+            })
+        }
+    }
+}
+else global.autoposts = {}
 
-const conf = require('./conf.json');
 const token = conf.discord.token
 const prefix = conf.discord.prefix
 
-client.once('ready', () => {
-    client.user.setActivity("ed help", {type : "WATCHING"});
+global.client.once('ready', () => {
+    global.client.user.setActivity("ed help", {type : "WATCHING"});
     console.log("Bot ready...");
 })
 
-client.on('message', message => {
+global.client.on('message', message => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
@@ -33,23 +58,23 @@ client.on('message', message => {
 
 	
 
-    const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+    const command = global.client.commands.get(commandName) || global.client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
     if (!command) return;
 
     if (command.permissions) {
         const authorPerms = message.channel.permissionsFor(message.author);
         if (!authorPerms || !authorPerms.has(command.permissions)) {
-            return message.reply('Vous n\'êtes pas autorisé à faire ça !');
+            return message.lineReply('Vous n\'êtes pas autorisé à faire ça !');
         }
     }
     
 
     if (command.guildOnly && message.channel.type === 'dm') {
-        return message.reply('Je ne peux pas utiliser cette commande en dm !');
+        return message.lineReply('Je ne peux pas utiliser cette commande en dm !');
     }
     
-    const { cooldowns } = client;
+    const { cooldowns } = global.client;
 
     if (!cooldowns.has(command.name)) {
         cooldowns.set(command.name, new Discord.Collection());
@@ -64,7 +89,7 @@ client.on('message', message => {
 
         if (now < expirationTime) {
             const timeLeft = (expirationTime - now) / 1000;
-            return message.reply(`Veuillez patienter encore ${timeLeft.toFixed(1)} secondes avant de réutiliser la commande \`${command.name}\`.`);
+            return message.lineReply(`Veuillez patienter encore ${timeLeft.toFixed(1)} secondes avant de réutiliser la commande \`${command.name}\`.`);
         }
 
     }
@@ -77,9 +102,9 @@ client.on('message', message => {
 		command.execute(message, args);
 	} catch (error) {
 		console.error(error);
-		message.reply('There was an error trying to execute that command!');
+		message.lineReply('There was an error trying to execute that command!');
 	}
 });
 
 
-client.login(token);
+global.client.login(token);

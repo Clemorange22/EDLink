@@ -1,6 +1,3 @@
-const conf = require('../../conf.json');
-const prefix = conf.discord.prefix
-
 module.exports = {
 	name: 'help',
 	description: 'Liste toutes mes commandes ou donne des informations sur une commande spécifique',
@@ -8,6 +5,7 @@ module.exports = {
 	cooldown: 5,
     usage : '<nom de la commande>',
 	execute(message, args) {
+        const prefix = conf.discord.prefix
         const data = [];
 		const { commands } = message.client;
 
@@ -19,11 +17,11 @@ module.exports = {
             return message.author.send(data, { split: true })
                 .then(() => {
                     if (message.channel.type === 'dm') return;
-                    message.reply('Je t\'ai envoyé la liste de mes commandes en DM !');
+                    message.lineReply('Je t\'ai envoyé la liste de mes commandes en DM !');
                 })
                 .catch(error => {
                     console.error(`Could not send help DM to ${message.author.tag}.\n`, error);
-                    message.reply('On dirait que je ne peux pas te DM... Est-ce que tu as tes DMs ddésactivés ?');
+                    message.lineReply('On dirait que je ne peux pas te DM... Est-ce que tu as tes DMs désactivés ?');
                 });
         
 		}

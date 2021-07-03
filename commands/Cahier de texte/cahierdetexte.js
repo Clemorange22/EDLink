@@ -1,13 +1,7 @@
 const EcoleDirecte = require("ecoledirecte.js");
 const Discord = require('discord.js')
 const format  = require("date-fns/format");
-const isFuture = require('date-fns/isFuture')
 
-
-
-const conf = require("../../conf.json");
-const username = conf.ed.username;
-const password = conf.ed.password;
 
 function traduireJourSemaine(jour){
     switch (jour){
@@ -86,6 +80,8 @@ module.exports = {
     usage: "<date>( format : dd-mm-yyyy ,facultatif)",
     execute(message, args) {
         (async () => {
+            const username = conf.ed.username;
+            const password = conf.ed.password;
             const session = new EcoleDirecte.Session(username,password);
             const account = await session.login().catch(err => {
                 console.error(`This login did not go well.`);

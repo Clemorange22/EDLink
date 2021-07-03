@@ -1,0 +1,10 @@
+{
+    "discord" : {
+        "token":"<token>",
+        "prefix":"ed "
+    },
+    "ed" : {
+        "username" : "<nom d'utilisateur école directe>",
+        "password" : "<mot de passe école directe>"
+    }
+}

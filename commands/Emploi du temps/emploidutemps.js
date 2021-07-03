@@ -1,4 +1,4 @@
-const EcoleDirecte = require("../../node_modules/ecoledirecte.js");
+const EcoleDirecte = require("ecoledirecte.js");
 const request = require('request');
 const fs = require('fs')
 
@@ -14,10 +14,6 @@ const { MessageAttachment } = require('discord.js')
 
 const nodeHtmlToImage = require('node-html-to-image')
 
-const conf = require("../../conf.json");
-const username = conf.ed.username;
-const password = conf.ed.password;
-
 module.exports = {
     name: "emploidutemps",
     aliases: ["edt"],
@@ -26,8 +22,10 @@ module.exports = {
     memberpermissions:"VIEW_CHANNEL",
     cooldown: 5,
     usage :'<jour/j/semaine/s> <jour-mois-année> (emploi du temps de la semaine suivante si absent)',
-    execute(message, args) {
+    execute(destination, args) {
         (async () => {
+          const username = conf.ed.username;
+          const password = conf.ed.password;
             function calcDate(args) { // Calcul des dates de début et de fin du calendrier à demander à école directe
                 if (args[1]) {
                     if (args[0] == "jour" || args[0] == "j") {
@@ -100,6 +98,13 @@ module.exports = {
               message.reply("La récupération des données auprès d'école directe a échouée, assurez vous d'utiliser la commande correctement \"<prefix>emploidutemps <jour/j/semaine/s> <jour-mois-année>\".\n Sinon, vérifiez les paramètres de connexion du bot.")
               };
               var emploiDuTemps = JSON.parse(response.body).data;
+              if (!emploiDuTemps[0] && destination.channel) return destination.lineReply('Aucun cours dans cette période ! :partying_face:')
+              else if(!emploiDuTemps[0]){
+                if(args[0]=='j') return client.channels.cache.get(destination).send('Aucun cours aujourd\'hui ! :partying_face:')
+                else if (args[0]=='s') return client.channels.cache.get(destination).send('Aucun cours cette semaine ! :partying_face:')
+                else return
+              }
+              
               var heureDebutJournee = parseInt(emploiDuTemps[0].start_date.split(" ")[1].split(":")[0]);
               var heureFinJournee = parseInt(emploiDuTemps[0].end_date.split(" ")[1].split(":")[0]);
               for(var i = 0;i <= emploiDuTemps.length-1; i++) {
@@ -335,13 +340,12 @@ module.exports = {
 
               page.push(page_foot)
 
-              console.log(page.join(""))
-
               nodeHtmlToImage({
                 html: page.join("")
               }).then((image)=>{
                 const attachment = new MessageAttachment(image)
-                message.channel.send(attachment)
+                if (destination.channel) destination.lineReply(attachment)
+                else global.client.channels.cache.get(destination).send(attachment)
               })
               
             });

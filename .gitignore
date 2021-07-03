@@ -1,6 +1,6 @@
-# EDLink Configuration file
+# EDLink Configuration files
 conf.json
-
+autoposts.json
 # VSCode Configuration file
 .vscode
 
