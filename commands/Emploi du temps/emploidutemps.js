@@ -7,6 +7,8 @@ const format = require('date-fns/format');
 var addDays = require('date-fns/addDays');
 const compareAsc = require('date-fns/compareAsc')
 var addHours = require('date-fns/addHours')
+var isValid = require('date-fns/isValid')
+
 
 
 
@@ -95,9 +97,10 @@ module.exports = {
             };
             request(options, function (error, response) {
               if (error) {console.log(error);
-              message.reply("La récupération des données auprès d'école directe a échouée, assurez vous d'utiliser la commande correctement \"<prefix>emploidutemps <jour/j/semaine/s> <jour-mois-année>\".\n Sinon, vérifiez les paramètres de connexion du bot.")
-              };
+              return destination.lineReply(`La récupération des données auprès d'école directe a échouée, assurez vous d'utiliser la commande correctement \"${conf.discord.prefix}emploidutemps <jour/j/semaine/s> <jour-mois-année>\".\n Sinon, vérifiez les paramètres de connexion du bot.`)
+              }
               var emploiDuTemps = JSON.parse(response.body).data;
+              if (!emploiDuTemps) return destination.lineReply(`La récupération des données auprès d'école directe a échouée, assurez vous d'utiliser la commande correctement \"${conf.discord.prefix}emploidutemps <jour/j/semaine/s> <jour-mois-année>\".\n Sinon, vérifiez les paramètres de connexion du bot.`)
               if (!emploiDuTemps[0] && destination.channel) return destination.lineReply('Aucun cours dans cette période ! :partying_face:')
               else if(!emploiDuTemps[0]){
                 if(args[0]=='j') return client.channels.cache.get(destination).send('Aucun cours aujourd\'hui ! :partying_face:')

@@ -1,0 +1,65 @@
+const {createAlerteTask , saveAlertesConf} = require('../../helpers/helpers')
+
+module.exports = {
+    name: "alertes",
+    aliases: ["alerts"],
+    description: "Permet de configurer des alertes quand un cours est modifié ou annulé.\nalertes create <\"nom\"> <#salon> <@role-mentionné(optionnel)> : Crée une alerte\nlist : liste les alertes actives sur le serveur\ndelete <\"nom\"> : supprime une alerte",
+    guildOnly: true,
+    memberpermissions:"MANAGE_MESSAGES",
+    cooldown: 5,
+    usage: "create/list/delete <arguments>",
+    execute(message, args) {
+        var method = args.shift()
+        if (method == 'create') {
+            //Traitement et vérification des arguments
+            if (!args[0]) return message.lineReply(`Nom incorrect ! Faites ${conf.discord.prefix}help alertes`)
+            var name = args.shift()
+            if (!(args[0] && args[0].startsWith('<#') && args[0].endsWith('>'))) return message.lineReply(`Salon incorrect ! Faites ${conf.discord.prefix}help alertes`)
+            var channel = args.shift().slice(2,-1)
+            if (args[0]){
+                if ((args[0] && args[0].startsWith('<@&') && args[0].endsWith('>')) || args[0] == '@everyone' || args[0] == '@here') var mention = args[0]
+                else return message.lineReply('Mention incorrecte !  Vous devez mentionner un rôle, @everyone ou @here !')
+            }
+            //Enregistrement de la nouvelle alerte dans la configuration
+            if (!global.alertesConf[message.guild.id]) global.alertesConf[message.guild.id] = {}
+            global.alertesConf[message.guild.id][name] = {
+                channel : channel
+            };
+            if (mention) global.alertesConf[message.guild.id][name].mention = mention;
+
+            saveAlertesConf(JSON.stringify(alertesConf));
+
+            //Création de la tâche cron de l'alerte
+            if (!global.alertes[message.guild.id]) global.alertes[message.guild.id] = {}
+            if (mention) global.alertes[message.guild.id][name] = createAlerteTask(channel,mention)
+            else global.alertes[message.guild.id][name] = createAlerteTask(channel)
+            message.lineReply(`L'alerte ${name} a bien été créé !`)
+        }
+        else if (method == 'list') {
+            var reponse = [`Les alertes actuellement activées sur **${message.guild.name}** sont :\n`]
+            for ([nomAlerte,confAlerte] of Object.entries(alertesConf[message.guild.id]) ){
+                if (!confAlerte.mention) reponse.push(`**${nomAlerte}** : Salon : <#${confAlerte.channel}>\n`)
+                else {
+                    if (confAlerte.mention.startsWith('<@&') && confAlerte.mention.endsWith('>')) reponse.push(`**${nomAlerte}** : Salon : <#${confAlerte.channel}> Mention : Role ID :${confAlerte.mention.slice(3,-1)}\n`)
+                    else reponse.push(`**${nomAlerte}** : Salon : <#${confAlerte.channel}> Mention : ${confAlerte.mention.slice(1)}\n`)
+                }
+            }
+            message.lineReply(reponse.join(''))
+        }
+        else if (method == 'delete') {
+            if (!args[0]) return message.lineReply(`Arguments incorrects ! Faites ${conf.discord.prefix}help alertes`)
+
+            var alerteASupprimer = args.shift()
+
+            if (!alertesConf[message.guild.id][alerteASupprimer]) return message.lineReply(`Aucun alerte nommée ${alerteASupprimer} sur **${message.guild.name}** !`)
+            alertes[message.guild.id][alerteASupprimer].stop()
+            delete alertes[message.guild.id][alerteASupprimer]
+
+            delete alertesConf[message.guild.id][alerteASupprimer]
+            saveAlertesConf(JSON.stringify(alertesConf))
+
+            message.lineReply(`L'alerte ${alerteASupprimer} a été correctement supprimée ! :white_check_mark:`)
+        }
+        else return message.lineReply(`Arguments incorrects ! Faites ${conf.discord.prefix}help alertes`);
+    },
+};

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const cron = require('node-cron')
 global.conf = require('./conf.json')
+const { createAlerteTask } = require('./helpers/helpers')
 
 const Discord = require('discord.js');
 require('discord-reply');
@@ -41,6 +42,27 @@ if (autopostsconf != {}){
     }
 }
 else global.autoposts = {}
+
+try {
+    if (fs.existsSync('./alertes.json')) {
+      global.alertesConf = require('./alertes.json')
+    }else{
+       global.alertesConf = {}
+    }
+} catch(err) {
+    console.error(err)
+}
+if (alertesConf != {}){
+    global.alertes = {}
+    for(let [serveur,alertesServeur] of Object.entries(alertesConf)){
+        for(let [nomAlerte,alerteConf] of Object.entries(alertesServeur)){
+            if(!alertes[serveur]) alertes[serveur] = {}
+            if (alerteConf.mention) alertes[serveur][nomAlerte] = createAlerteTask(alerteConf.channel,alerteConf.mention)
+            else alertes[serveur][nomAlerte] = createAlerteTask(alerteConf.channel)
+        }
+    }
+}
+else global.alertes = {}
 
 const token = conf.discord.token
 const prefix = conf.discord.prefix
