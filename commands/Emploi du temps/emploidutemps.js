@@ -2,15 +2,7 @@ const EcoleDirecte = require("ecoledirecte.js");
 const request = require('request');
 const fs = require('fs')
 
-const startOfWeek = require('date-fns/startOfWeek');
-const format = require('date-fns/format');
-var addDays = require('date-fns/addDays');
-const compareAsc = require('date-fns/compareAsc')
-var addHours = require('date-fns/addHours')
-var isValid = require('date-fns/isValid')
-
-
-
+const {startOfWeek,format,addDays,compareAsc,addHours,getDay,getHours,addWeeks} = require('date-fns');
 
 const { MessageAttachment } = require('discord.js')
 
@@ -49,8 +41,14 @@ module.exports = {
                           var dateFin = dateDebut;
                         }
                         else if (args[0] == 's' || args[0] == 'semaine'){
-                          var dateDebut = format(startOfWeek(Date.now(),{weekStartsOn : 1}), "yyyy'-'MM'-'dd");
-                          var dateFin = format(addDays(startOfWeek(Date.now(),{weekStartsOn : 1}),4), "yyyy'-'MM'-'dd")
+                          if (getDay(Date.now()) == 0 || getDay(Date.now()) == 6 || (getDay(Date.now()) == 5 && getHours(Date.now()) >= 18)){
+                            var dateDebut = format(startOfWeek(addWeeks(Date.now(),1),{weekStartsOn : 1}), "yyyy'-'MM'-'dd");
+                            var dateFin = format(addDays(startOfWeek(addWeeks(Date.now(),1),{weekStartsOn : 1}),4), "yyyy'-'MM'-'dd")
+                          }
+                          else {
+                            var dateDebut = format(startOfWeek(Date.now(),{weekStartsOn : 1}), "yyyy'-'MM'-'dd");
+                            var dateFin = format(addDays(startOfWeek(Date.now(),{weekStartsOn : 1}),4), "yyyy'-'MM'-'dd")
+                          }
                         }
                         else {
                         var date = args[0].split("-");
@@ -219,7 +217,10 @@ module.exports = {
                 colonne.push('<div class="column">')
                 if ((args[0]=='s'||args[0] == 'semaine')){
                   if (!args[1]){
-                    var date = addDays(startOfWeek(Date.now(),{weekStartsOn : 1}),j)
+                    if (getDay(Date.now()) == 0 || getDay(Date.now()) == 6 || (getDay(Date.now()) == 5 && getHours(Date.now()) >= 18)) {
+                      var date = addDays(startOfWeek(addWeeks(Date.now(),1),{weekStartsOn : 1}),j)
+                    }
+                    else var date = addDays(startOfWeek(Date.now(),{weekStartsOn : 1}),j)
                   }
                   else {
                     var date = args[1].split('-');
