@@ -4,7 +4,17 @@
         "prefix":"ed "
     },
     "ed" : {
-        "username" : "<nom d'utilisateur école directe>",
-        "password" : "<mot de passe école directe>"
+        "accounts" : {
+            "<nom-compte-1>" : {
+                "username" : "<nom d'utilisateur école directe compte 1>",
+                "password" : "<mot de passe école directe compte 1>"
+            },
+            "<nom-compte-2>" : {
+                "username" : "<nom d'utilisateur école directe compte 2>",
+                "password" : "<mot de passe école directe compte 2>"
+            }
+        },
+        "defaultAccount" : "<nom-compte-par-defaut>"
+        
     }
 }

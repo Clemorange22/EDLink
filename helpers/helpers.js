@@ -5,10 +5,10 @@ const { format ,addWeeks , isPast } = require('date-fns');
 const fs = require('fs')
 
 module.exports = {
-    createAlerteTask(channel,mention){
+    createAlerteTask(compte,channel,mention){
         return cron.schedule('*/10 * * * *',async () =>{
             const session = new EcoleDirecte.session()
-            const account = await session.login(conf.ed.username,conf.ed.password)
+            const account = await session.login(conf.ed.accounts[compte]["username"],conf.ed.accounts[compte]["password"])
             var options = {
                 'method': 'POST',
                 'url': `https://api.ecoledirecte.com/v3/${account._raw.typeCompte}/${account.edId}/emploidutemps.awp?verbe=get&`,
@@ -82,5 +82,18 @@ module.exports = {
                 return;
             }
             });
+    },
+    saveComptesConf(newConf){
+        fs.writeFile('./comptes.json', newConf, function (err) {
+            if (err) {
+                console.log('There has been an error saving your configuration data.');
+                console.log(err.message);
+                return;
+            }
+            });
+    },
+    compteUtilisateur(id) {
+        if (comptesParDefaut[id]) return [conf.ed.accounts[comptesParDefaut[id]]["username"],conf.ed.accounts[comptesParDefaut[id]]["password"]]
+        else return [conf.ed.accounts[conf.ed.defaultAccount]["username"],conf.ed.accounts[conf.ed.defaultAccount]["password"]]
     }
 }

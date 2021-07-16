@@ -8,6 +8,8 @@ const { MessageAttachment } = require('discord.js')
 
 const nodeHtmlToImage = require('node-html-to-image')
 
+const { compteUtilisateur } = require('../../helpers/helpers')
+
 module.exports = {
     name: "emploidutemps",
     aliases: ["edt"],
@@ -16,10 +18,13 @@ module.exports = {
     memberpermissions:"VIEW_CHANNEL",
     cooldown: 5,
     usage :'<jour/j/semaine/s> <jour-mois-année> (emploi du temps de la semaine suivante si absent)',
-    execute(destination, args) {
+    execute(destination, args, compte) {
         (async () => {
-          const username = conf.ed.username;
-          const password = conf.ed.password;
+          var username =''
+          var password = ''
+          if (!compte)  [username,password] = compteUtilisateur(destination.author.id)
+          else [username,password] = [conf.ed.accounts[compte]["username"],conf.ed.accounts[compte]["password"]]
+
             function calcDate(args) { // Calcul des dates de début et de fin du calendrier à demander à école directe
                 if (args[1]) {
                     if (args[0] == "jour" || args[0] == "j") {

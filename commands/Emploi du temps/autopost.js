@@ -25,7 +25,7 @@ function saveAutopostConf(newConf){
 module.exports = {
     name: "autopost",
     aliases: [],
-    description: "autopost create <\"nom\"> <#salon> <j/s> <\"cron-format\">: permet de paramétrer un post automatique d'emploi du temps (<cron-format> : délai entre chaque post au format cron. Utilisez http://www.csgnetwork.com/crongen.html pour le générer, j/s : mode d'emploi du temps : du jour ou de la semaine)\n autopost list : permet de lister les posts automatiques\n autopost delete <name> : permet de supprimer un post automatique",
+    description: "autopost create <\"nom\"> <nom-compte> <#salon> <j/s> <\"cron-format\">: permet de paramétrer un post automatique d'emploi du temps (<cron-format> : délai entre chaque post au format cron. Utilisez http://www.csgnetwork.com/crongen.html pour le générer, j/s : mode d'emploi du temps : du jour ou de la semaine)\n autopost list : permet de lister les posts automatiques\n autopost delete <name> : permet de supprimer un post automatique",
     guildOnly: true,
     memberpermissions:"MANAGE_MESSAGES",
     cooldown: 5,
@@ -36,6 +36,9 @@ module.exports = {
             if (method == 'create'){
                 var name = args.shift();
                 if (global.autopostsconf[message.guild.id] && global.autopostsconf[message.guild.id][name]) return message.reply(`Il existe déjà un post automatique nommé ${name}`);;
+
+                var compte = args.shift()
+                if (!conf.ed.accounts[compte]) return message.lineReply('Ce compte n\'existe pas !')
 
                 var channelID = getChannelIDFromMention(args.shift());
                 if (channelID == "Not a mention !") return message.lineReply('La mention donnée n\'est pas valide !');
@@ -49,7 +52,8 @@ module.exports = {
                 global.autopostsconf[message.guild.id][name] = {
                     channelID : channelID,
                     cronExpression : cronFormat,
-                    mode : modeEDT
+                    mode : modeEDT,
+                    compte : compte
                 }
                 let newConf = JSON.stringify(autopostsconf);
                 saveAutopostConf(newConf);
@@ -58,14 +62,14 @@ module.exports = {
                 if (!global.autoposts[message.guild.id]) global.autoposts[message.guild.id] = {}
                 global.autoposts[message.guild.id][name] = cron.schedule(cronFormat,async ()=>{
                     const emploiDuTemps = require('./emploidutemps.js');
-                    emploiDuTemps.execute(channelID,[modeEDT]);
+                    emploiDuTemps.execute(channelID,[modeEDT],compte);
                 })
                 message.lineReply('Post automatique activé ! :white_check_mark:')
             }
             else if (method == 'list'){
                 var reponse = [`Les posts automatiques actuellement activé sur **${message.guild.name}** sont :\n`]
                 for(let [clee,element] of Object.entries(autopostsconf[message.guild.id])){
-                    reponse.push(`**${clee}** :\nSalon : <#${element.channelID}>, Expression Cron :${element.cronExpression} , mode : ${element.mode}`)
+                    reponse.push(`**${clee}** :\nSalon : <#${element.channelID}>, Expression Cron :${element.cronExpression} , mode : ${element.mode}\n`)
                 }
                 if (reponse.length == 1) return message.lineReply('Aucun post automatique n\'est actuellement actif sur ce serveur !');
                 return message.lineReply(reponse.join(""))

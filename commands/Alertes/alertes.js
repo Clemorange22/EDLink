@@ -3,7 +3,7 @@ const {createAlerteTask , saveAlertesConf} = require('../../helpers/helpers')
 module.exports = {
     name: "alertes",
     aliases: ["alerts"],
-    description: "Permet de configurer des alertes quand un cours est modifié ou annulé.\nalertes create <\"nom\"> <#salon> <@role-mentionné(optionnel)> : Crée une alerte\nlist : liste les alertes actives sur le serveur\ndelete <\"nom\"> : supprime une alerte",
+    description: "Permet de configurer des alertes quand un cours est modifié ou annulé.\nalertes create <\"nom\"> <nom-compte> <#salon> <@role-mentionné(optionnel)> : Crée une alerte\nlist : liste les alertes actives sur le serveur\ndelete <\"nom\"> : supprime une alerte",
     guildOnly: true,
     memberpermissions:"MANAGE_MESSAGES",
     cooldown: 5,
@@ -14,8 +14,13 @@ module.exports = {
             //Traitement et vérification des arguments
             if (!args[0]) return message.lineReply(`Nom incorrect ! Faites ${conf.discord.prefix}help alertes`)
             var name = args.shift()
+
+            var compte = args.shift()
+            if (!conf.ed.accounts[compte]) return message.lineReply('Ce compte n\'existe pas !')
+
             if (!(args[0] && args[0].startsWith('<#') && args[0].endsWith('>'))) return message.lineReply(`Salon incorrect ! Faites ${conf.discord.prefix}help alertes`)
             var channel = args.shift().slice(2,-1)
+
             if (args[0]){
                 if ((args[0] && args[0].startsWith('<@&') && args[0].endsWith('>')) || args[0] == '@everyone' || args[0] == '@here') var mention = args[0]
                 else return message.lineReply('Mention incorrecte !  Vous devez mentionner un rôle, @everyone ou @here !')
@@ -23,7 +28,8 @@ module.exports = {
             //Enregistrement de la nouvelle alerte dans la configuration
             if (!global.alertesConf[message.guild.id]) global.alertesConf[message.guild.id] = {}
             global.alertesConf[message.guild.id][name] = {
-                channel : channel
+                channel : channel,
+                compte : compte
             };
             if (mention) global.alertesConf[message.guild.id][name].mention = mention;
 
@@ -31,11 +37,12 @@ module.exports = {
 
             //Création de la tâche cron de l'alerte
             if (!global.alertes[message.guild.id]) global.alertes[message.guild.id] = {}
-            if (mention) global.alertes[message.guild.id][name] = createAlerteTask(channel,mention)
-            else global.alertes[message.guild.id][name] = createAlerteTask(channel)
+            if (mention) global.alertes[message.guild.id][name] = createAlerteTask(compte,channel,mention)
+            else global.alertes[message.guild.id][name] = createAlerteTask(compte,channel)
             message.lineReply(`L'alerte ${name} a bien été créé !`)
         }
         else if (method == 'list') {
+            if (!alertesConf[message.guild.id]) alertesConf[message.guild.id] = {}
             var reponse = [`Les alertes actuellement activées sur **${message.guild.name}** sont :\n`]
             for ([nomAlerte,confAlerte] of Object.entries(alertesConf[message.guild.id]) ){
                 if (!confAlerte.mention) reponse.push(`**${nomAlerte}** : Salon : <#${confAlerte.channel}>\n`)
@@ -44,7 +51,8 @@ module.exports = {
                     else reponse.push(`**${nomAlerte}** : Salon : <#${confAlerte.channel}> Mention : ${confAlerte.mention.slice(1)}\n`)
                 }
             }
-            message.lineReply(reponse.join(''))
+            if (reponse.length <= 1) message.lineReply(`Aucune alerte n'est actuellements activée sur **${message.guild.name}**`)
+            else message.lineReply(reponse.join(''))
         }
         else if (method == 'delete') {
             if (!args[0]) return message.lineReply(`Arguments incorrects ! Faites ${conf.discord.prefix}help alertes`)

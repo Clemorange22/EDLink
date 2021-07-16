@@ -1,7 +1,7 @@
 const fs = require('fs');
 const cron = require('node-cron')
 global.conf = require('./conf.json')
-const { createAlerteTask } = require('./helpers/helpers')
+const { createAlerteTask , saveComptesConf} = require('./helpers/helpers')
 
 const Discord = require('discord.js');
 require('discord-reply');
@@ -36,7 +36,7 @@ if (autopostsconf != {}){
             if(!autoposts[serveur]) autoposts[serveur] = {}
             autoposts[serveur][autopostName] = cron.schedule(autopostSettings.cronExpression,async ()=>{
                 const emploiDuTemps = require('./commands/Emploi du temps/emploidutemps.js');
-                emploiDuTemps.execute(autopostSettings.channelID,[autopostSettings.mode]);
+                emploiDuTemps.execute(autopostSettings.channelID,[autopostSettings.mode],autopostSettings.compte);
             })
         }
     }
@@ -57,18 +57,32 @@ if (alertesConf != {}){
     for(let [serveur,alertesServeur] of Object.entries(alertesConf)){
         for(let [nomAlerte,alerteConf] of Object.entries(alertesServeur)){
             if(!alertes[serveur]) alertes[serveur] = {}
-            if (alerteConf.mention) alertes[serveur][nomAlerte] = createAlerteTask(alerteConf.channel,alerteConf.mention)
-            else alertes[serveur][nomAlerte] = createAlerteTask(alerteConf.channel)
+            if (alerteConf.mention) alertes[serveur][nomAlerte] = createAlerteTask(alerteConf.compte,alerteConf.channel,alerteConf.mention)
+            else alertes[serveur][nomAlerte] = createAlerteTask(alerteConf.compte,alerteConf.channel)
         }
     }
 }
 else global.alertes = {}
 
+try {
+    if (fs.existsSync('./comptes.json')) {
+        global.comptesParDefaut = require('./comptes.json')
+        for ([user,compteParDefaut] of Object.entries(comptesParDefaut)){
+            if (!conf.ed.accounts[compteParDefaut]) delete comptesParDefaut[user]
+        }
+        saveComptesConf(JSON.stringify(comptesParDefaut))
+    }else{
+        global.comptesParDefaut = {} 
+    }
+  } catch(err) {
+    console.error(err)
+  }
+
 const token = conf.discord.token
 const prefix = conf.discord.prefix
 
 global.client.once('ready', () => {
-    global.client.user.setActivity("ed help", {type : "WATCHING"});
+    global.client.user.setActivity(`${prefix}help`, {type : "WATCHING"});
     console.log("Bot ready...");
 })
 
