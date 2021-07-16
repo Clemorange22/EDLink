@@ -24,6 +24,8 @@ Pour tout problème vous pouvez ouvrir une issue ici ou rejoindre ce serveur  Di
 
 Ceci est mon premier projet avec Node.js, donc n'hésitez surtout pas à me donner vos retours sur ma manière de coder ou à faire des suggestions
 
+Les PRs sont bienvenues ! 👍
+
 ## Dépendances
 
 Discord.js : https://discord.js.org/#/
