@@ -4,7 +4,15 @@ EDLink est un bot discord codé avec Node.js qui vous permet de consulter votre 
 
 Il également intègre des fonctionnalités de post automatique de l'emploi du temps, d'alertes en cas de cours modifiés ou annulés, et le support du multi-comptes
 
-Ce bot a été conçu dans l'idée d'avoir une instance auto-hébergée par collège/lycée/école (pas de centralisation)
+Ce bot a été conçu dans l'idée d'avoir une instance auto-hébergée par collège/lycée/école (pas de centralisation) avec un compte Ecole Directe par classe configuré (pas besoin d'un compte par personne)
+
+## Confidentialité
+
+Lors de votre utilisation de ce bot, vos identifiants Ecole Directe restent stockés uniquements sur votre machine, et ne sont envoyés qu'à Ecole Directe (nécessaire pour se connecter et accéder à votre emploi du temps/cahier de texte)
+
+N'importe quelle personne présente sur un serveur où le bot est présent aura accès aux emplois du temps et cahiers de texte de l'intégralité des comptes du bot
+
+Je ne suis en aucun cas responsable de votre utilisation de votre compte école directe
 
 ## Installation
 
