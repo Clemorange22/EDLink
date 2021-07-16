@@ -21,6 +21,13 @@ Vous pouvez obtenir toutes les informations concernant les différentes commande
 ## Retours
 
 Pour tout problème vous pouvez ouvrir une issue ici ou rejoindre ce serveur  Discord : https://discord.gg/98tfhaQe5D
+
 Ceci est mon premier projet avec Node.js, donc n'hésitez surtout pas à me donner vos retours sur ma manière de coder ou à faire des suggestions
+
+## Dépendances
+
+Discord.js : https://discord.js.org/#/
+
+ecoledirecte.js : https://github.com/a2br/ecoledirecte.js
 
 PS : Un mirror github est à venir, j'attends seulement la sortie de la version 1.15 de Gitea qui me permettra de le faire facilement
