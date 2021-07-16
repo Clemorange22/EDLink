@@ -12,7 +12,7 @@ Lors de votre utilisation de ce bot, vos identifiants Ecole Directe restent stoc
 
 N'importe quelle personne présente sur un serveur où le bot est présent aura accès aux emplois du temps et cahiers de texte de l'intégralité des comptes du bot
 
-Je ne suis en aucun cas responsable de votre utilisation de votre compte école directe
+Je ne suis en aucun cas responsable de votre utilisation de votre compte école directe, ni de quelconque sanction pouvant en découler
 
 ## Installation
 
