@@ -25,7 +25,7 @@ function saveAutopostConf(newConf){
 module.exports = {
     name: "autopost",
     aliases: [],
-    description: "autopost create <\"nom\"> <nom-compte> <#salon> <j/s> <\"cron-format\">: permet de paramétrer un post automatique d'emploi du temps (<cron-format> : délai entre chaque post au format cron. Utilisez http://www.csgnetwork.com/crongen.html pour le générer, j/s : mode d'emploi du temps : du jour ou de la semaine)\n autopost list : permet de lister les posts automatiques\n autopost delete <name> : permet de supprimer un post automatique",
+    description: "\nautopost create <\"nom\"> <nom-compte> <#salon> <j/s> <\"cron-format\">: permet de paramétrer un post automatique d'emploi du temps (<cron-format> : délai entre chaque post au format cron. Vous pouvez utiliser <https://crontab.cronhub.io/> pour le générer, j/s : mode d'emploi du temps : du jour ou de la semaine)\n\n autopost list : permet de lister les posts automatiques\n\n autopost delete <name> : permet de supprimer un post automatique",
     guildOnly: true,
     memberpermissions:"MANAGE_MESSAGES",
     cooldown: 5,
