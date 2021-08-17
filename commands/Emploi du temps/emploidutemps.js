@@ -20,9 +20,7 @@ module.exports = {
     usage :'<jour/j/semaine/s> <jour-mois-année> (emploi du temps de la semaine suivante si absent)',
     execute(destination, args, compte) {
         (async () => {
-          var username =''
-          var password = ''
-          if (!compte)  [username,password,compte] = compteUtilisateur(destination.author.id)
+          if (!compte) var [username,password,compte] = compteUtilisateur(destination.author.id)
           else [username,password] = [conf.ed.accounts[compte]["username"],conf.ed.accounts[compte]["password"]]
 
             function calcDate(args) { // Calcul des dates de début et de fin du calendrier à demander à école directe
