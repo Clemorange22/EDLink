@@ -1,6 +1,6 @@
 {
   "name": "edlink",
-  "version": "0.9",
+  "version": "0.9.0",
   "description": "A discord bot for école directe",
   "homepage": "https://git.dynacloud.ynh.fr/cboittin/EDLink",
   "bugs": {"url":"https://git.dynacloud.ynh.fr/cboittin/EDLink/issues"},
