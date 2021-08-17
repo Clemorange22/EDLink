@@ -4,8 +4,18 @@ const cron = require('node-cron')
 const { format ,addWeeks , isPast } = require('date-fns');
 const fs = require('fs')
 
+function saveAlertesConf(newConf){
+    fs.writeFile('./alertes.json', newConf, function (err) {
+        if (err) {
+            console.log('There has been an error saving your configuration data.');
+            console.log(err.message);
+            return;
+        }
+        });
+}
+
 module.exports = {
-    createAlerteTask(compte,channel,mention){
+    createAlerteTask(compte,channel,mention){ //Crée la tâche alertant toutes les 10 minutes si un cours est modifié / annulé
         return cron.schedule('*/10 * * * *',async () =>{
             const session = new EcoleDirecte.session()
             const account = await session.login(conf.ed.accounts[compte]["username"],conf.ed.accounts[compte]["password"])
@@ -42,7 +52,7 @@ module.exports = {
                 }
                 var msg = []
                 if (coursModifies.length != 0 || coursAnnules.lenght !=0) {
-                    msg.push('**Modification d\'emploi du temps :**\n')
+                    msg.push(`**Modifications d'emploi du temps pour le compte ${compte}:**\n`)
                     if (coursAnnules.lenght != 0) {
                         msg.push('Cours annulés :\n')
                         for (cours of coursAnnules) {
@@ -74,7 +84,7 @@ module.exports = {
                 
         })
     },
-    saveAlertesConf(newConf){
+    saveAlertesConf(newConf){ //Sauvegarde la config des alertes
         fs.writeFile('./alertes.json', newConf, function (err) {
             if (err) {
                 console.log('There has been an error saving your configuration data.');
@@ -83,7 +93,7 @@ module.exports = {
             }
             });
     },
-    saveComptesConf(newConf){
+    saveComptesConf(newConf){ //Sauvegardes la config des comptes
         fs.writeFile('./comptes.json', newConf, function (err) {
             if (err) {
                 console.log('There has been an error saving your configuration data.');
@@ -92,8 +102,8 @@ module.exports = {
             }
             });
     },
-    compteUtilisateur(id) {
-        if (comptesParDefaut[id]) return [conf.ed.accounts[comptesParDefaut[id]]["username"],conf.ed.accounts[comptesParDefaut[id]]["password"]]
-        else return [conf.ed.accounts[conf.ed.defaultAccount]["username"],conf.ed.accounts[conf.ed.defaultAccount]["password"]]
+    compteUtilisateur(id) { //Renvoie le compte école directe (identifiant,mdp) à utiliser en fonction de l'utilisateur
+        if (comptesParDefaut[id]) return [conf.ed.accounts[comptesParDefaut[id]]["username"],conf.ed.accounts[comptesParDefaut[id]]["password"]]//Renvoie le compte choisi par l'utilisateur
+        else return [conf.ed.accounts[conf.ed.defaultAccount]["username"],conf.ed.accounts[conf.ed.defaultAccount]["password"]]//Renvoie le compte par défaut si l'utlisateur n'en a pas choisi
     }
 }
