@@ -82,7 +82,8 @@ module.exports = {
         (async () => {
             var username = '';
             var password = '';
-            [username,password] = compteUtilisateur(message.author.id)
+            var compte = '';
+            [username,password,compte] = compteUtilisateur(message.author.id)
             const session = new EcoleDirecte.Session(username,password);
             const account = await session.login().catch(err => {
                 console.error(`This login did not go well.`);
@@ -113,7 +114,8 @@ module.exports = {
                         .setDescription(cahierDeTexte[t].job.content.text)
                         .addFields(
                             {name:'Noté', value: note},
-                            {name:'À rendre en ligne', value: aRendreEnligne}
+                            {name:'À rendre en ligne', value: aRendreEnligne},
+                            {name:'Compte',value:compte}
                         )
                         .setFooter(`Travail donné le ${format(Date.parse(cahierDeTexte[t].job.givenAt),'dd/MM/yyyy')} par ${cahierDeTexte[t].teacher}`)
                         
