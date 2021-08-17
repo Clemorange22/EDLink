@@ -287,7 +287,7 @@ module.exports = {
                 };
                 
                 
-                for (var c=0;c<emploiDuTemps.length;c++) {
+                for (var c=0;c<emploiDuTemps.length;c++) {//la boucle s'execute une fois pour chaque cours
                   if ((args[0]=='s'||args[0] == 'semaine')){
                     if (args[1]){
                       var date = args[1].split('-');
@@ -315,12 +315,16 @@ module.exports = {
                         var lineBreak = "<br/>"
                       }
                       else {
-                        var lineBreak = "     "
+                        var lineBreak = ""
                       }
+                      if (emploiDuTemps[c].isAnnule) var statutCours = '<p class="is-size-6	has-text-centered" style="padding:0;margin:0;"><strong>ANNULÉ</strong></p>'
+                      else if (emploiDuTemps[c].isModifie) var statutCours = '<p class="is-size-6	has-text-centered" style="padding:0;margin:0;"><strong>MODIFIÉ</strong></p>'
+                      else var statutCours = ''
                       colonne.push(`
                       <div class="card" style="height:${height}%;background-color:${emploiDuTemps[c].color};overflow:hidden;word-wrap: break-word;">
                         <div class="card-content" style="padding:0;margin:0;">
                           <p class="title is-6 has-text-centered" style="padding:0;margin:0;">${emploiDuTemps[c].start_date.split(" ")[1]}-${emploiDuTemps[c].end_date.split(" ")[1]}</p>
+                          ${statutCours}
                           <p class="is-size-6	has-text-centered" style="padding:0;margin:0;">${emploiDuTemps[c].matiere} en ${emploiDuTemps[c].salle}${lineBreak}Professeur : ${emploiDuTemps[c].prof}</p>
                         </div>
                       </div>`)
