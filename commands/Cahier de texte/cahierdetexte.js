@@ -74,7 +74,7 @@ module.exports = {
     name: "cahierdetexte",
     aliases: ["cdt"],
     description: "Donne les devoirs à faire",
-    guildOnly: true,
+    guildOnly: false,
     memberpermissions:"VIEW_CHANNEL",
     cooldown: 5,
     usage: "<date>( format : dd-mm-yyyy ,facultatif)",
