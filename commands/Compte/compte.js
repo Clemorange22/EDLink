@@ -4,7 +4,7 @@ module.exports = {
     name: "compte",
     aliases: ["comptes","account","accounts"],
     description: "\n\`\`list\`\` : Affiche tous les comptes actuellement disponibles\n\`\`switch <nom-compte>\`\` : Change ton compte par défaut pour le compte demandé",
-    guildOnly: true,
+    guildOnly: false,
     memberpermissions:"VIEW_CHANNEL",
     cooldown: 2,
     usage: "<list/switch/sw> <arguments>",
