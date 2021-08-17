@@ -22,7 +22,7 @@ module.exports = {
         (async () => {
           var username =''
           var password = ''
-          if (!compte)  [username,password] = compteUtilisateur(destination.author.id)
+          if (!compte)  [username,password,compte] = compteUtilisateur(destination.author.id)
           else [username,password] = [conf.ed.accounts[compte]["username"],conf.ed.accounts[compte]["password"]]
 
             function calcDate(args) { // Calcul des dates de début et de fin du calendrier à demander à école directe
@@ -199,7 +199,7 @@ module.exports = {
               //Génération des colonnes de l'edt
               //Colonne de gauche (contenant les horaires)
               var colonne = [];
-              colonne.push(`<div class="column is-1"><br/><table class="table">`);
+              colonne.push(`<div class="column is-1"><strong>${compte}</strong><br/><table class="table">`);
               for(var c = heureDebutJournee;c <= heureFinJournee;c++) {
                 if (c < 10){
                   var heure = `0${c}:00`

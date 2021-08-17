@@ -103,7 +103,7 @@ module.exports = {
             });
     },
     compteUtilisateur(id) { //Renvoie le compte école directe (identifiant,mdp) à utiliser en fonction de l'utilisateur
-        if (comptesParDefaut[id]) return [conf.ed.accounts[comptesParDefaut[id]]["username"],conf.ed.accounts[comptesParDefaut[id]]["password"]]//Renvoie le compte choisi par l'utilisateur
-        else return [conf.ed.accounts[conf.ed.defaultAccount]["username"],conf.ed.accounts[conf.ed.defaultAccount]["password"]]//Renvoie le compte par défaut si l'utlisateur n'en a pas choisi
+        if (comptesParDefaut[id]) return [conf.ed.accounts[comptesParDefaut[id]]["username"],conf.ed.accounts[comptesParDefaut[id]]["password"],comptesParDefaut[id]]//Renvoie le compte choisi par l'utilisateur
+        else return [conf.ed.accounts[conf.ed.defaultAccount]["username"],conf.ed.accounts[conf.ed.defaultAccount]["password"],conf.ed.defaultAccount]//Renvoie le compte par défaut si l'utlisateur n'en a pas choisi
     }
 }
