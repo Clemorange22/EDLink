@@ -14,7 +14,7 @@ module.exports = {
     name: "emploidutemps",
     aliases: ["edt"],
     description: "Donne l’emploi du temps d’un jour ou d’une semaine donnée (sans argument, donne l’emploi du temps de la semaine en cours)",
-    guildOnly: true,
+    guildOnly: false,
     memberpermissions:"VIEW_CHANNEL",
     cooldown: 5,
     usage :'<jour/j/semaine/s> <jour-mois-année> (emploi du temps de la semaine suivante si absent)',
