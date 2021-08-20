@@ -3,6 +3,10 @@ conf.json
 autoposts.json
 alertes.json
 comptes.json
+
+# PM2 Configuration file
+ecosystem.config.js
+
 # VSCode Configuration file
 .vscode
 
