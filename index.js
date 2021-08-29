@@ -29,12 +29,12 @@ try {
   } catch(err) {
     console.error(err)
   }
-if (autopostsconf != {}){
+if (global.autopostsconf != {}){
     global.autoposts = {}
-    for(let [serveur,serveursAutoposts] of Object.entries(autopostsconf)){
+    for(let [serveur,serveursAutoposts] of Object.entries(global.autopostsconf)){
         for(let [autopostName,autopostSettings] of Object.entries(serveursAutoposts)){
-            if(!autoposts[serveur]) autoposts[serveur] = {}
-            autoposts[serveur][autopostName] = cron.schedule(autopostSettings.cronExpression,async ()=>{
+            if(!global.autoposts[serveur]) global.autoposts[serveur] = {}
+            global.autoposts[serveur][autopostName] = cron.schedule(autopostSettings.cronExpression,async ()=>{
                 const emploiDuTemps = require('./commands/Emploi du temps/emploidutemps.js');
                 emploiDuTemps.execute(autopostSettings.channelID,[autopostSettings.mode],autopostSettings.compte);
             })
@@ -52,13 +52,13 @@ try {
 } catch(err) {
     console.error(err)
 }
-if (alertesConf != {}){
+if (global.alertesConf != {}){
     global.alertes = {}
-    for(let [serveur,alertesServeur] of Object.entries(alertesConf)){
+    for(let [serveur,alertesServeur] of Object.entries(global.alertesConf)){
         for(let [nomAlerte,alerteConf] of Object.entries(alertesServeur)){
-            if(!alertes[serveur]) alertes[serveur] = {}
-            if (alerteConf.mention) alertes[serveur][nomAlerte] = createAlerteTask(alerteConf.compte,alerteConf.channel,alerteConf.mention)
-            else alertes[serveur][nomAlerte] = createAlerteTask(alerteConf.compte,alerteConf.channel)
+            if(!global.alertes[serveur]) global.alertes[serveur] = {}
+            if (alerteConf.mention) global.alertes[serveur][nomAlerte] = createAlerteTask(alerteConf.compte,alerteConf.channel,alerteConf.mention)
+            else global.alertes[serveur][nomAlerte] = createAlerteTask(alerteConf.compte,alerteConf.channel)
         }
     }
 }
@@ -67,10 +67,10 @@ else global.alertes = {}
 try {
     if (fs.existsSync('./comptes.json')) {
         global.comptesParDefaut = require('./comptes.json')
-        for ([user,compteParDefaut] of Object.entries(comptesParDefaut)){
-            if (!conf.ed.accounts[compteParDefaut]) delete comptesParDefaut[user]
+        for (let [user,compteParDefaut] of Object.entries(global.comptesParDefaut)){
+            if (!global.conf.ed.accounts[compteParDefaut]) delete global.comptesParDefaut[user]
         }
-        saveComptesConf(JSON.stringify(comptesParDefaut))
+        saveComptesConf(JSON.stringify(global.comptesParDefaut))
     }else{
         global.comptesParDefaut = {} 
     }
@@ -78,8 +78,8 @@ try {
     console.error(err)
   }
 
-const token = conf.discord.token
-const prefix = conf.discord.prefix
+const token = global.conf.discord.token
+const prefix = global.conf.discord.prefix
 
 global.client.once('ready', () => {
     global.client.user.setActivity(`${prefix}help`, {type : "WATCHING"});

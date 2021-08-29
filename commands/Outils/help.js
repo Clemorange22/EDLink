@@ -5,7 +5,7 @@ module.exports = {
 	cooldown: 5,
     usage : '<nom de la commande>',
 	execute(message, args) {
-        const prefix = conf.discord.prefix
+        const prefix = global.conf.discord.prefix
         const data = [];
 		const { commands } = message.client;
 

@@ -18,7 +18,7 @@ module.exports = {
     createAlerteTask(compte,channel,mention){ //Crée la tâche alertant toutes les 10 minutes si un cours est modifié / annulé
         return cron.schedule('*/10 * * * *',async () =>{
             const session = new EcoleDirecte.session()
-            const account = await session.login(conf.ed.accounts[compte]["username"],conf.ed.accounts[compte]["password"])
+            const account = await session.login(global.conf.ed.accounts[compte]["username"],global.conf.ed.accounts[compte]["password"])
             var options = {
                 'method': 'POST',
                 'url': `https://api.ecoledirecte.com/v3/${account._raw.typeCompte}/${account.edId}/emploidutemps.awp?verbe=get&`,
@@ -44,8 +44,8 @@ module.exports = {
                 var edt = JSON.parse(response.body).data;
                 var coursAnnules = []
                 var coursModifies = []
-                for (cours of edt) {
-                    if (!alertesConf[message.guild.id].alertesEffectues.some(coursEnregistre => coursEnregistre.id == cours.id)) {
+                for (let cours of edt) {
+                    if (!global.alertesConf[channel].alertesEffectues.some(coursEnregistre => coursEnregistre.id == cours.id)) {
                         if (cours.isAnnule) coursAnnules.push(cours)
                         else if (cours.isModifie) coursModifies.push(cours)
                     }
@@ -55,31 +55,31 @@ module.exports = {
                     msg.push(`**Modifications d'emploi du temps pour le compte ${compte}:**\n`)
                     if (coursAnnules.lenght != 0) {
                         msg.push('Cours annulés :\n')
-                        for (cours of coursAnnules) {
+                        for (let cours of coursAnnules) {
                             let date = cours.start_date.split(' ')[0]
                             let heure = cours.start_date.split(' ')[1]
                             msg.push(`${cours.matiere} le ${date.split('-').join('/')} à ${heure.split(':').join('h')}\n`)
-                            if (!global.alertesConf[message.guild.id].alertesEffectues) global.alertesConf[message.guild.id].alertesEffectues = []
-                            global.alertesConf[message.guild.id].alertesEffectues.push(cours)
+                            if (!global.alertesConf[channel].alertesEffectues) global.alertesConf[channel].alertesEffectues = []
+                            global.alertesConf[channel].alertesEffectues.push(cours)
                         }
                     }
                     if (coursModifies.lenght != 0) {
                         msg.push('Cours modifiés :\n')
-                        for (cours of coursModifies) {
+                        for (let cours of coursModifies) {
                             let date = cours.start_date.split(' ')[0]
                             let heure = cours.start_date.split(' ')[1]
                             msg.push(`Le cours ${cours.matiere} du ${date.split('-').join('/')} aura lieu à ${heure.split(':').join('h')}\n`)
-                            if (!global.alertesConf[message.guild.id].alertesEffectues) global.alertesConf[message.guild.id].alertesEffectues = []
-                            global.alertesConf[message.guild.id].alertesEffectues.push(cours)
+                            if (!global.alertesConf[channel].alertesEffectues) global.alertesConf[channel].alertesEffectues = []
+                            global.alertesConf[channel].alertesEffectues.push(cours)
                         }
                     }
                     if (mention) msg.push(mention)
-                    client.channels.cache.get(channel).send(msg.join(''))
+                    global.client.channels.cache.get(channel).send(msg.join(''))
                 }
-                for (coursEnregistre of alertesConf[message.guild.id].alertesEffectues){
-                    if (isPast(Date.parse(coursEnregistre.end_date))) delete coursEnregistre
+                for (let coursEnregistre of global.alertesConf[channel].alertesEffectues){
+                    if (isPast(Date.parse(coursEnregistre.end_date))) delete global.alertesConf[channel].alertesEffectues[Array.prototype.indexOf.call(global.alertesConf[channel].alertesEffectues,coursEnregistre)]
                 }
-                saveAlertesConf(JSON.stringify(alertesConf))
+                saveAlertesConf(JSON.stringify(global.alertesConf))
             })
                 
         })
@@ -103,7 +103,7 @@ module.exports = {
             });
     },
     compteUtilisateur(id) { //Renvoie le compte école directe (identifiant,mdp) à utiliser en fonction de l'utilisateur
-        if (comptesParDefaut[id]) return [conf.ed.accounts[comptesParDefaut[id]]["username"],conf.ed.accounts[comptesParDefaut[id]]["password"],comptesParDefaut[id]]//Renvoie le compte choisi par l'utilisateur
-        else return [conf.ed.accounts[conf.ed.defaultAccount]["username"],conf.ed.accounts[conf.ed.defaultAccount]["password"],conf.ed.defaultAccount]//Renvoie le compte par défaut si l'utlisateur n'en a pas choisi
+        if (global.comptesParDefaut[id]) return [global.conf.ed.accounts[global.comptesParDefaut[id]]["username"],global.conf.ed.accounts[global.comptesParDefaut[id]]["password"],global.comptesParDefaut[id]]//Renvoie le compte choisi par l'utilisateur
+        else return [global.conf.ed.accounts[global.conf.ed.defaultAccount]["username"],global.conf.ed.accounts[global.conf.ed.defaultAccount]["password"],global.conf.ed.defaultAccount]//Renvoie le compte par défaut si l'utlisateur n'en a pas choisi
     }
 }

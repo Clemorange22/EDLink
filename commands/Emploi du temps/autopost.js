@@ -35,10 +35,10 @@ module.exports = {
             var method = args.shift().toLowerCase();
             if (method == 'create'){
                 var name = args.shift();
-                if (global.autopostsconf[message.guild.id] && global.autopostsconf[message.guild.id][name]) return message.reply(`Il existe déjà un post automatique nommé ${name}`);;
+                if (global.autopostsconf[message.guild.id] && global.autopostsconf[message.guild.id][name]) return message.reply(`Il existe déjà un post automatique nommé ${name}`);
 
                 var compte = args.shift()
-                if (!conf.ed.accounts[compte]) return message.lineReply('Ce compte n\'existe pas !')
+                if (!global.conf.ed.accounts[compte]) return message.lineReply('Ce compte n\'existe pas !')
 
                 var channelID = getChannelIDFromMention(args.shift());
                 if (channelID == "Not a mention !") return message.lineReply('La mention donnée n\'est pas valide !');
@@ -55,7 +55,7 @@ module.exports = {
                     mode : modeEDT,
                     compte : compte
                 }
-                let newConf = JSON.stringify(autopostsconf);
+                let newConf = JSON.stringify(global.autopostsconf);
                 saveAutopostConf(newConf);
                 
 
@@ -68,27 +68,27 @@ module.exports = {
             }
             else if (method == 'list'){
                 var reponse = [`Les posts automatiques actuellement activé sur **${message.guild.name}** sont :\n`]
-                for(let [clee,element] of Object.entries(autopostsconf[message.guild.id])){
+                for(let [clee,element] of Object.entries(global.autopostsconf[message.guild.id])){
                     reponse.push(`**${clee}** :\nSalon : <#${element.channelID}>, Expression Cron :${element.cronExpression} , mode : ${element.mode}\n`)
                 }
                 if (reponse.length == 1) return message.lineReply('Aucun post automatique n\'est actuellement actif sur ce serveur !');
                 return message.lineReply(reponse.join(""))
             }
             else if (method == 'delete'){
-                if (!args[0]) return message.lineReply(`Arguments invalides ! Faites ${conf.discord.prefix}help autopost`)
+                if (!args[0]) return message.lineReply(`Arguments invalides ! Faites ${global.conf.discord.prefix}help autopost`)
                 var autopostToDelete = args.shift();
-                if(!autopostsconf[message.guild.id][autopostToDelete]) return message.lineReply(`Le post automatique ${autopostToDelete} n'existe pas !`)
-                autoposts[message.guild.id][autopostToDelete].stop();
-                delete autoposts[message.guild.id][autopostToDelete]
-                delete autopostsconf[message.guild.id][autopostToDelete]
+                if(!global.autopostsconf[message.guild.id][autopostToDelete]) return message.lineReply(`Le post automatique ${autopostToDelete} n'existe pas !`)
+                global.autoposts[message.guild.id][autopostToDelete].stop();
+                delete global.autoposts[message.guild.id][autopostToDelete]
+                delete global.autopostsconf[message.guild.id][autopostToDelete]
 
-                let newConf = JSON.stringify(autopostsconf);
+                let newConf = JSON.stringify(global.autopostsconf);
                 saveAutopostConf(newConf)
 
                 message.lineReply(`Le post automatique ${autopostToDelete} a été correctement supprimé !`)
             } 
             else {
-                message.lineReply(`Arguments invalides ! Faites ${conf.discord.prefix}help autopost`)
+                message.lineReply(`Arguments invalides ! Faites ${global.conf.discord.prefix}help autopost`)
             }
         })();
     },

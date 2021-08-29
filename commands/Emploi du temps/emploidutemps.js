@@ -1,3 +1,4 @@
+/* eslint-disable no-redeclare */
 const EcoleDirecte = require("ecoledirecte.js");
 const request = require('request');
 const fs = require('fs')
@@ -18,10 +19,11 @@ module.exports = {
     memberpermissions:"VIEW_CHANNEL",
     cooldown: 5,
     usage :'<jour/j/semaine/s> <jour-mois-année> (emploi du temps de la semaine suivante si absent)',
+    // eslint-disable-next-line no-unused-vars
     execute(destination, args, compte) {
         (async () => {
           if (!compte) var [username,password,compte] = compteUtilisateur(destination.author.id)
-          else [username,password] = [conf.ed.accounts[compte]["username"],conf.ed.accounts[compte]["password"]]
+          else [username,password] = [global.conf.ed.accounts[compte]["username"],global.conf.ed.accounts[compte]["password"]]
 
             function calcDate(args) { // Calcul des dates de début et de fin du calendrier à demander à école directe
                 if (args[1]) {
@@ -57,7 +59,7 @@ module.exports = {
                         var date = args[0].split("-");
                         var dateDebut = [date[2],date[1],date[0]].join("-");
                         var dateFin = dateDebut
-                        };
+                        }
                       }
                       else {
                         var dateDebut = format(Date.now(),"yyyy'-'MM'-'dd");
@@ -73,7 +75,7 @@ module.exports = {
 
             const session = new EcoleDirecte.Session(username,password);
             const account = await session.login().catch(err => {
-                console.error("This login did not go well.");
+                console.error(`This login did not go well :\nError :${err}`);
             });
 
             var options = {
@@ -98,14 +100,14 @@ module.exports = {
             };
             request(options, function (error, response) {
               if (error) {console.log(error);
-              return destination.lineReply(`La récupération des données auprès d'école directe a échouée, assurez vous d'utiliser la commande correctement \"${conf.discord.prefix}emploidutemps <jour/j/semaine/s> <jour-mois-année>\".\n Sinon, vérifiez les paramètres de connexion du bot.`)
+              return destination.lineReply(`La récupération des données auprès d'école directe a échouée, assurez vous d'utiliser la commande correctement "${global.conf.discord.prefix}emploidutemps <jour/j/semaine/s> <jour-mois-année>".\n Sinon, vérifiez les paramètres de connexion du bot.`)
               }
               var emploiDuTemps = JSON.parse(response.body).data;
-              if (!emploiDuTemps) return destination.lineReply(`La récupération des données auprès d'école directe a échouée, assurez vous d'utiliser la commande correctement \"${conf.discord.prefix}emploidutemps <jour/j/semaine/s> <jour-mois-année>\".\n Sinon, vérifiez les paramètres de connexion du bot.`)
+              if (!emploiDuTemps) return destination.lineReply(`La récupération des données auprès d'école directe a échouée, assurez vous d'utiliser la commande correctement "${global.conf.discord.prefix}emploidutemps <jour/j/semaine/s> <jour-mois-année>".\n Sinon, vérifiez les paramètres de connexion du bot.`)
               if (!emploiDuTemps[0] && destination.channel) return destination.lineReply('Aucun cours dans cette période ! :partying_face:')
               else if(!emploiDuTemps[0]){
-                if(args[0]=='j') return client.channels.cache.get(destination).send('Aucun cours aujourd\'hui ! :partying_face:')
-                else if (args[0]=='s') return client.channels.cache.get(destination).send('Aucun cours cette semaine ! :partying_face:')
+                if(args[0]=='j') return global.client.channels.cache.get(destination).send('Aucun cours aujourd\'hui ! :partying_face:')
+                else if (args[0]=='s') return global.client.channels.cache.get(destination).send('Aucun cours cette semaine ! :partying_face:')
                 else return
               }
               
@@ -115,7 +117,7 @@ module.exports = {
                 var heureDebutCours = parseInt(emploiDuTemps[i].start_date.split(" ")[1].split(":")[0]);
                 if (heureDebutCours < heureDebutJournee) {
                   heureDebutJournee = heureDebutCours
-                };
+                }
                 if (emploiDuTemps[i].end_date.split(" ")[1].split(":")[1] == "00") {
                   var heureFinCours = emploiDuTemps[i].end_date.split(" ")[1].split(":")[0];
                 }
@@ -124,8 +126,8 @@ module.exports = {
                 } 
                 if (heureFinCours > heureFinJournee) {
                   heureFinJournee = heureFinCours;
-                };
-              };
+                }
+              }
               // Génération de l'emploi du temps en HTML
               function traduireMoisAnnee(mois){
                 switch (mois){
@@ -155,8 +157,8 @@ module.exports = {
                     return 'Décembre';
                   default :
                     throw new error("L'entrée doit être un mois en anglais !");
-                };
-              };
+                }
+              }
               function calcJourMois(date){
                 switch (format(date,'d')){
                   case '1':
@@ -170,7 +172,7 @@ module.exports = {
               else if (args[0] == "semaine" || args[0] == "s") {nombreJours = 5}
               else {
                 nombreJours = 1
-              };
+              }
               var imageHeight = "700";
               var imageWidth = "1200";
               var page = []
@@ -204,7 +206,7 @@ module.exports = {
                 }
                 else {
                   var heure = `${c}:00`
-                };
+                }
                 colonne.push(`<tr style='line-height:${100/(heureFinJournee-heureDebutJournee)}%'><td>${heure}</td></tr>`);
               }
               colonne.push(`</table></div>`);
@@ -245,7 +247,7 @@ module.exports = {
                       case 4:
                         var jourSemaine = ('Vendredi');
                         break;
-                    };
+                    }
 
                   colonne.push(`<div class="has-text-centered"><strong>${jourSemaine} ${calcJourMois(date)} ${traduireMoisAnnee(format(date,'MMMM'))}</strong></div>`);
                 }
@@ -279,10 +281,10 @@ module.exports = {
                     case 'Sunday':
                       var jourSemaine = ('Dimanche');
                       break;
-                  };
+                  }
 
                   colonne.push(`<div class="has-text-centered"><strong>${jourSemaine} ${calcJourMois(date)} ${traduireMoisAnnee(format(date,'MMMM'))}</strong></div>`);
-                };
+                }
                 
                 
                 for (var c=0;c<emploiDuTemps.length;c++) {//la boucle s'execute une fois pour chaque cours
@@ -343,11 +345,11 @@ module.exports = {
                     colonne.push(`
                     <div style="height:${height}%"></div>`)
                     }
-                  };
-                };
+                  }
+                }
                 colonne.push('</div>')
                 page.push(colonne.join(""))
-              };
+              }
 
               page.push(page_foot)
 

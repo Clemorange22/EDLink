@@ -1,3 +1,4 @@
+/* eslint-disable no-redeclare */
 const EcoleDirecte = require("ecoledirecte.js");
 const Discord = require('discord.js')
 const format  = require("date-fns/format");
@@ -26,7 +27,7 @@ function traduireJourSemaine(jour){
         case 'Sunday':
           var jourSemaine = ('Dimanche');
           break;
-      };
+      }
       return jourSemaine
 }
 
@@ -67,8 +68,8 @@ switch (jour){
         return 'Décembre';
     default :
         throw new error("L'entrée doit être un mois en anglais !");
-};
-};
+}
+}
 
 module.exports = {
     name: "cahierdetexte",
@@ -99,7 +100,7 @@ module.exports = {
             if (cahierDeTexte.length == 0) message.channel.send('**Pas de devoirs à faire !** :partying_face:')
             else {
             var reponse =[];
-            for(t = 0; t<cahierDeTexte.length;t++){
+            for(let t = 0; t<cahierDeTexte.length;t++){
                 var dateRendu = new Date(cahierDeTexte[t].date)
                 if (cahierDeTexte[t].job){
                     if (cahierDeTexte[t].test) var note = 'Oui'
@@ -123,7 +124,7 @@ module.exports = {
                     )
                 }
             }
-            for(e = 0; e < reponse.length;e++){
+            for(let e = 0; e < reponse.length;e++){
                 message.channel.send(reponse[e]);
             }
             }
