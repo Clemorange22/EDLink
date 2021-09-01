@@ -18,11 +18,24 @@ module.exports = {
     guildOnly: false,
     memberpermissions:"VIEW_CHANNEL",
     cooldown: 5,
-    usage :'<jour/j/semaine/s> <jour-mois-année> (emploi du temps de la semaine suivante si absent)',
+    usage :'<jour/j/semaine/s> <compte> <jour-mois-année>',
     // eslint-disable-next-line no-unused-vars
     execute(destination, args, compte) {
         (async () => {
-          if (!compte) var [username,password,compte] = compteUtilisateur(destination.author.id)
+          if (!compte) {
+            if (args[0] && global.conf.ed.accounts[args[0]]){
+              compte = args.shift()
+              username = global.conf.ed.accounts[compte]['username']
+              password = global.conf.ed.accounts[compte]['password']
+            }
+            else if (args[1] && global.conf.ed.accounts[args[1]]){
+              compte = args[1]
+              args.splice(1,1)
+              username = global.conf.ed.accounts[compte]['username']
+              password = global.conf.ed.accounts[compte]['password']
+            }
+            else var [username,password,compte] = compteUtilisateur(destination.author.id)
+          }
           else [username,password] = [global.conf.ed.accounts[compte]["username"],global.conf.ed.accounts[compte]["password"]]
 
             function calcDate(args) { // Calcul des dates de début et de fin du calendrier à demander à école directe
