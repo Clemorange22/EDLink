@@ -38,16 +38,16 @@ module.exports = {
                 if (global.autopostsconf[message.guild.id] && global.autopostsconf[message.guild.id][name]) return message.reply(`Il existe déjà un post automatique nommé ${name}`);
 
                 var compte = args.shift()
-                if (!global.conf.ed.accounts[compte]) return message.lineReply('Ce compte n\'existe pas !')
+                if (!global.conf.ed.accounts[compte]) return message.reply('Ce compte n\'existe pas !')
 
                 var channelID = getChannelIDFromMention(args.shift());
-                if (channelID == "Not a mention !") return message.lineReply('La mention donnée n\'est pas valide !');
+                if (channelID == "Not a mention !") return message.reply('La mention donnée n\'est pas valide !');
                 
                 var modeEDT = args.shift().toLowerCase()
-                if (modeEDT != 'j' && modeEDT != 's') return message.lineReply('Le mode d\'emploi du temps doit être "j" ou "s" !')
+                if (modeEDT != 'j' && modeEDT != 's') return message.reply('Le mode d\'emploi du temps doit être "j" ou "s" !')
 
                 var cronFormat = args.join(" ");
-                if(!cron.validate(cronFormat)) return message.lineReply('cron-format invalide ! Veuillez utiliser http://www.csgnetwork.com/crongen.html pour le générer');
+                if(!cron.validate(cronFormat)) return message.reply('cron-format invalide ! Veuillez utiliser http://www.csgnetwork.com/crongen.html pour le générer');
                 if(!global.autopostsconf[message.guild.id]) global.autopostsconf[message.guild.id] = {}
                 global.autopostsconf[message.guild.id][name] = {
                     channelID : channelID,
@@ -64,20 +64,20 @@ module.exports = {
                     const emploiDuTemps = require('./emploidutemps.js');
                     emploiDuTemps.execute(channelID,[modeEDT],compte);
                 })
-                message.lineReply('Post automatique activé ! :white_check_mark:')
+                message.reply('Post automatique activé ! :white_check_mark:')
             }
             else if (method == 'list'){
                 var reponse = [`Les posts automatiques actuellement activé sur **${message.guild.name}** sont :\n`]
                 for(let [clee,element] of Object.entries(global.autopostsconf[message.guild.id])){
                     reponse.push(`**${clee}** :\nSalon : <#${element.channelID}>, Expression Cron :${element.cronExpression} , mode : ${element.mode}\n`)
                 }
-                if (reponse.length == 1) return message.lineReply('Aucun post automatique n\'est actuellement actif sur ce serveur !');
-                return message.lineReply(reponse.join(""))
+                if (reponse.length == 1) return message.reply('Aucun post automatique n\'est actuellement actif sur ce serveur !');
+                return message.reply(reponse.join(""))
             }
             else if (method == 'delete'){
-                if (!args[0]) return message.lineReply(`Arguments invalides ! Faites ${global.conf.discord.prefix}help autopost`)
+                if (!args[0]) return message.reply(`Arguments invalides ! Faites ${global.conf.discord.prefix}help autopost`)
                 var autopostToDelete = args.shift();
-                if(!global.autopostsconf[message.guild.id][autopostToDelete]) return message.lineReply(`Le post automatique ${autopostToDelete} n'existe pas !`)
+                if(!global.autopostsconf[message.guild.id][autopostToDelete]) return message.reply(`Le post automatique ${autopostToDelete} n'existe pas !`)
                 global.autoposts[message.guild.id][autopostToDelete].stop();
                 delete global.autoposts[message.guild.id][autopostToDelete]
                 delete global.autopostsconf[message.guild.id][autopostToDelete]
@@ -85,10 +85,10 @@ module.exports = {
                 let newConf = JSON.stringify(global.autopostsconf);
                 saveAutopostConf(newConf)
 
-                message.lineReply(`Le post automatique ${autopostToDelete} a été correctement supprimé !`)
+                message.reply(`Le post automatique ${autopostToDelete} a été correctement supprimé !`)
             } 
             else {
-                message.lineReply(`Arguments invalides ! Faites ${global.conf.discord.prefix}help autopost`)
+                message.reply(`Arguments invalides ! Faites ${global.conf.discord.prefix}help autopost`)
             }
         })();
     },

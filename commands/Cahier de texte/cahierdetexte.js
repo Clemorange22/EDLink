@@ -2,7 +2,7 @@
 const EcoleDirecte = require("ecoledirecte.js");
 const Discord = require('discord.js')
 const format  = require("date-fns/format");
-const { compteUtilisateur } = require('../../helpers/helpers')
+const { compteUtilisateur, splitEmbeds } = require('../../helpers/helpers')
 
 function traduireJourSemaine(jour){
     switch (jour){
@@ -124,8 +124,9 @@ module.exports = {
                     )
                 }
             }
-            for(let e = 0; e < reponse.length;e++){
-                message.channel.send(reponse[e]);
+            var embedsLists = splitEmbeds(reponse)
+            for(let embedsList of embedsLists){
+                message.channel.send({embeds : embedsList});
             }
             }
         })();

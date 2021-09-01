@@ -3,6 +3,7 @@ const request = require('request')
 const cron = require('node-cron')
 const { format ,addWeeks , isPast } = require('date-fns');
 const fs = require('fs')
+const { Util } = require('discord.js')
 
 function saveAlertesConf(newConf){
     fs.writeFile('./alertes.json', newConf, function (err) {
@@ -74,7 +75,13 @@ module.exports = {
                         }
                     }
                     if (mention) msg.push(mention)
-                    global.client.channels.cache.get(channel).send(msg.join(''))
+
+                    msg = msg.join('')
+                    var channelToSend = global.client.channels.cache.get(channel)
+                    const messagesToSend = Util.splitMessage(msg)
+                    for(let messageToSend of messagesToSend) {
+                        channelToSend.send(messageToSend)
+                    }
                 }
                 for (let coursEnregistre of global.alertesConf[channel].alertesEffectues){
                     if (isPast(Date.parse(coursEnregistre.end_date))) delete global.alertesConf[channel].alertesEffectues[Array.prototype.indexOf.call(global.alertesConf[channel].alertesEffectues,coursEnregistre)]
@@ -105,5 +112,18 @@ module.exports = {
     compteUtilisateur(id) { //Renvoie le compte école directe (identifiant,mdp) à utiliser en fonction de l'utilisateur
         if (global.comptesParDefaut[id]) return [global.conf.ed.accounts[global.comptesParDefaut[id]]["username"],global.conf.ed.accounts[global.comptesParDefaut[id]]["password"],global.comptesParDefaut[id]]//Renvoie le compte choisi par l'utilisateur
         else return [global.conf.ed.accounts[global.conf.ed.defaultAccount]["username"],global.conf.ed.accounts[global.conf.ed.defaultAccount]["password"],global.conf.ed.defaultAccount]//Renvoie le compte par défaut si l'utlisateur n'en a pas choisi
+    },
+    splitEmbeds(embedsToSplit) {
+        var embedsLists = []
+        var embedsList = []
+        for (let embed of embedsToSplit) {
+             if (embedsList.length == 10) {
+                 embedsLists.push(embedsList)
+                 embedsList = []
+             }
+             embedsList.push(embed)
+        }
+        embedsLists.push(embedsList)
+        return embedsLists
     }
 }

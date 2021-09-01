@@ -4,9 +4,11 @@ global.conf = require('./conf.json')
 const { createAlerteTask , saveComptesConf} = require('./helpers/helpers')
 
 const Discord = require('discord.js');
-require('discord-reply');
 
-global.client = new Discord.Client();
+var myIntents = new Discord.Intents()
+myIntents.add(Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.DIRECT_MESSAGES)
+
+global.client = new Discord.Client({intents: myIntents, partials: ['CHANNEL']});
 global.client.commands = new Discord.Collection();
 global.client.cooldowns = new Discord.Collection();
 
@@ -86,7 +88,7 @@ global.client.once('ready', () => {
     console.log("Bot ready...");
 })
 
-global.client.on('message', message => {
+global.client.on('messageCreate', message => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
@@ -101,13 +103,13 @@ global.client.on('message', message => {
     if (command.permissions) {
         const authorPerms = message.channel.permissionsFor(message.author);
         if (!authorPerms || !authorPerms.has(command.permissions)) {
-            return message.lineReply('Vous n\'êtes pas autorisé à faire ça !');
+            return message.reply('Vous n\'êtes pas autorisé à faire ça !');
         }
     }
     
 
-    if (command.guildOnly && message.channel.type === 'dm') {
-        return message.lineReply('Je ne peux pas utiliser cette commande en dm !');
+    if (command.guildOnly && message.channel.type === 'DM') {
+        return message.reply('Je ne peux pas utiliser cette commande en dm !');
     }
     
     const { cooldowns } = global.client;
@@ -125,7 +127,7 @@ global.client.on('message', message => {
 
         if (now < expirationTime) {
             const timeLeft = (expirationTime - now) / 1000;
-            return message.lineReply(`Veuillez patienter encore ${timeLeft.toFixed(1)} secondes avant de réutiliser la commande \`${command.name}\`.`);
+            return message.reply(`Veuillez patienter encore ${timeLeft.toFixed(1)} secondes avant de réutiliser la commande \`${command.name}\`.`);
         }
 
     }
@@ -138,7 +140,7 @@ global.client.on('message', message => {
 		command.execute(message, args);
 	} catch (error) {
 		console.error(error);
-		message.lineReply('There was an error trying to execute that command!');
+		message.reply('There was an error trying to execute that command!');
 	}
 });
 

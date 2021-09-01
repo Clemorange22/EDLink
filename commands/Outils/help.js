@@ -1,3 +1,5 @@
+const { Util } = require('discord.js')
+
 module.exports = {
 	name: 'help',
 	description: 'Liste toutes mes commandes ou donne des informations sur une commande spécifique',
@@ -6,23 +8,35 @@ module.exports = {
     usage : '<nom de la commande>',
 	execute(message, args) {
         const prefix = global.conf.discord.prefix
-        const data = [];
+        var reply = [];
 		const { commands } = message.client;
 
 		if (!args.length) {
-            data.push('Voici une liste de toutes mes commandes :');
-            data.push(commands.map(command => command.name).join(', '));
-            data.push(`\nVous pouvez envoyer \`${prefix}help [nom de la commande]\` pour avoir des informations spécifiques sur la commande !`);
-        
-            return message.author.send(data, { split: true })
+            reply.push('Voici une liste de toutes mes commandes :');
+            reply.push(commands.map(command => command.name).join(', '));
+            reply.push(`\nVous pouvez envoyer \`${prefix}help [nom de la commande]\` pour avoir des informations spécifiques sur la commande !`);
+            
+            const messagesToSend = Util.splitMessage(reply.join('\n'))
+            var firstMessage = true
+            for(let messageToSend of messagesToSend) {
+                if (firstMessage) {
+                message.author.send(messageToSend)
                 .then(() => {
-                    if (message.channel.type === 'dm') return;
-                    message.lineReply('Je t\'ai envoyé la liste de mes commandes en DM !');
+                    if (message.channel.type === 'DM') return;
+                    message.reply('Je t\'ai envoyé la liste de mes commandes en DM !');
                 })
                 .catch(error => {
                     console.error(`Could not send help DM to ${message.author.tag}.\n`, error);
-                    message.lineReply('On dirait que je ne peux pas te DM... Est-ce que tu as tes DMs désactivés ?');
+                    message.reply('On dirait que je ne peux pas te DM... Est-ce que tu as tes DMs désactivés ?');
                 });
+                firstMessage = false
+                }
+                else {
+                    message.author.send(messageToSend)
+                }
+                
+            }
+            return
         
 		}
         const name = args[0].toLowerCase();
@@ -32,15 +46,19 @@ module.exports = {
             return message.reply('Ce n\'est pas une commande valide !');
         }
 
-        data.push(`**Nom:** ${command.name}`);
+        reply.push(`**Nom:** ${command.name}`);
 
-        if (command.aliases) data.push(`**Alias:** ${command.aliases.join(', ')}`);
-        if (command.description) data.push(`**Description:** ${command.description}`);
-        if (command.usage) data.push(`**Utilisation:** ${prefix}${command.name} ${command.usage}`);
+        if (command.aliases) reply.push(`**Alias:** ${command.aliases.join(', ')}`);
+        if (command.description) reply.push(`**Description:** ${command.description}`);
+        if (command.usage) reply.push(`**Utilisation:** ${prefix}${command.name} ${command.usage}`);
 
-        data.push(`**Cooldown:** ${command.cooldown || 3} seconde(s)`);
+        reply.push(`**Cooldown:** ${command.cooldown || 3} seconde(s)`);
+        reply = reply.join('\n')
 
-        message.channel.send(data, { split: true });
+        const messagesToSend = Util.splitMessage(reply)
+            for(let messageToSend of messagesToSend) {
+                message.channel.send(messageToSend)
+            }
 
         
 	},

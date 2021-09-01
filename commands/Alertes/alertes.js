@@ -12,18 +12,18 @@ module.exports = {
         var method = args.shift()
         if (method == 'create') {
             //Traitement et vérification des arguments
-            if (!args[0]) return message.lineReply(`Nom incorrect ! Faites ${global.conf.discord.prefix}help alertes`)
+            if (!args[0]) return message.reply(`Nom incorrect ! Faites ${global.conf.discord.prefix}help alertes`)
             var name = args.shift()
 
             var compte = args.shift()
-            if (!global.conf.ed.accounts[compte]) return message.lineReply('Ce compte n\'existe pas !')
+            if (!global.conf.ed.accounts[compte]) return message.reply('Ce compte n\'existe pas !')
 
-            if (!(args[0] && args[0].startsWith('<#') && args[0].endsWith('>'))) return message.lineReply(`Salon incorrect ! Faites ${global.conf.discord.prefix}help alertes`)
+            if (!(args[0] && args[0].startsWith('<#') && args[0].endsWith('>'))) return message.reply(`Salon incorrect ! Faites ${global.conf.discord.prefix}help alertes`)
             var channel = args.shift().slice(2,-1)
 
             if (args[0]){
                 if ((args[0] && args[0].startsWith('<@&') && args[0].endsWith('>')) || args[0] == '@everyone' || args[0] == '@here') var mention = args[0]
-                else return message.lineReply('Mention incorrecte !  Vous devez mentionner un rôle, @everyone ou @here !')
+                else return message.reply('Mention incorrecte !  Vous devez mentionner un rôle, @everyone ou @here !')
             }
             //Enregistrement de la nouvelle alerte dans la configuration
             if (!global.alertesConf[message.guild.id]) global.alertesConf[message.guild.id] = {}
@@ -39,7 +39,7 @@ module.exports = {
             if (!global.alertes[message.guild.id]) global.alertes[message.guild.id] = {}
             if (mention) global.alertes[message.guild.id][name] = createAlerteTask(compte,channel,mention)
             else global.alertes[message.guild.id][name] = createAlerteTask(compte,channel)
-            message.lineReply(`L'alerte ${name} a bien été créé !`)
+            message.reply(`L'alerte ${name} a bien été créé !`)
         }
         else if (method == 'list') {
             if (!global.alertesConf[message.guild.id]) global.alertesConf[message.guild.id] = {}
@@ -51,23 +51,23 @@ module.exports = {
                     else reponse.push(`**${nomAlerte}** : Salon : <#${confAlerte.channel}> Mention : ${confAlerte.mention.slice(1)}\n`)
                 }
             }
-            if (reponse.length <= 1) message.lineReply(`Aucune alerte n'est actuellements activée sur **${message.guild.name}**`)
-            else message.lineReply(reponse.join(''))
+            if (reponse.length <= 1) message.reply(`Aucune alerte n'est actuellements activée sur **${message.guild.name}**`)
+            else message.reply(reponse.join(''))
         }
         else if (method == 'delete') {
-            if (!args[0]) return message.lineReply(`Arguments incorrects ! Faites ${global.conf.discord.prefix}help alertes`)
+            if (!args[0]) return message.reply(`Arguments incorrects ! Faites ${global.conf.discord.prefix}help alertes`)
 
             var alerteASupprimer = args.shift()
 
-            if (!global.alertesConf[message.guild.id][alerteASupprimer]) return message.lineReply(`Aucun alerte nommée ${alerteASupprimer} sur **${message.guild.name}** !`)
+            if (!global.alertesConf[message.guild.id][alerteASupprimer]) return message.reply(`Aucun alerte nommée ${alerteASupprimer} sur **${message.guild.name}** !`)
             global.alertes[message.guild.id][alerteASupprimer].stop()
             delete global.alertes[message.guild.id][alerteASupprimer]
 
             delete global.alertesConf[message.guild.id][alerteASupprimer]
             saveAlertesConf(JSON.stringify(global.alertesConf))
 
-            message.lineReply(`L'alerte ${alerteASupprimer} a été correctement supprimée ! :white_check_mark:`)
+            message.reply(`L'alerte ${alerteASupprimer} a été correctement supprimée ! :white_check_mark:`)
         }
-        else return message.lineReply(`Arguments incorrects ! Faites ${global.conf.discord.prefix}help alertes`);
+        else return message.reply(`Arguments incorrects ! Faites ${global.conf.discord.prefix}help alertes`);
     },
 };

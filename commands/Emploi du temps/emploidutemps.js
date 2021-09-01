@@ -100,11 +100,11 @@ module.exports = {
             };
             request(options, function (error, response) {
               if (error) {console.log(error);
-              return destination.lineReply(`La récupération des données auprès d'école directe a échouée, assurez vous d'utiliser la commande correctement "${global.conf.discord.prefix}emploidutemps <jour/j/semaine/s> <jour-mois-année>".\n Sinon, vérifiez les paramètres de connexion du bot.`)
+              return destination.reply(`La récupération des données auprès d'école directe a échouée, assurez vous d'utiliser la commande correctement "${global.conf.discord.prefix}emploidutemps <jour/j/semaine/s> <jour-mois-année>".\n Sinon, vérifiez les paramètres de connexion du bot.`)
               }
               var emploiDuTemps = JSON.parse(response.body).data;
-              if (!emploiDuTemps) return destination.lineReply(`La récupération des données auprès d'école directe a échouée, assurez vous d'utiliser la commande correctement "${global.conf.discord.prefix}emploidutemps <jour/j/semaine/s> <jour-mois-année>".\n Sinon, vérifiez les paramètres de connexion du bot.`)
-              if (!emploiDuTemps[0] && destination.channel) return destination.lineReply('Aucun cours dans cette période ! :partying_face:')
+              if (!emploiDuTemps) return destination.reply(`La récupération des données auprès d'école directe a échouée, assurez vous d'utiliser la commande correctement "${global.conf.discord.prefix}emploidutemps <jour/j/semaine/s> <jour-mois-année>".\n Sinon, vérifiez les paramètres de connexion du bot.`)
+              if (!emploiDuTemps[0] && destination.channel) return destination.reply('Aucun cours dans cette période ! :partying_face:')
               else if(!emploiDuTemps[0]){
                 if(args[0]=='j') return global.client.channels.cache.get(destination).send('Aucun cours aujourd\'hui ! :partying_face:')
                 else if (args[0]=='s') return global.client.channels.cache.get(destination).send('Aucun cours cette semaine ! :partying_face:')
@@ -357,7 +357,7 @@ module.exports = {
                 html: page.join("")
               }).then((image)=>{
                 const attachment = new MessageAttachment(image)
-                if (destination.channel) destination.lineReply(attachment)
+                if (destination.channel) destination.reply(attachment)
                 else global.client.channels.cache.get(destination).send(attachment)
               })
               
