@@ -78,22 +78,30 @@ module.exports = {
     guildOnly: false,
     memberpermissions:"VIEW_CHANNEL",
     cooldown: 5,
-    usage: "<date>( format : dd-mm-yyyy ,facultatif)",
+    usage: "<compte>(facultatif) <date>( format : dd-mm-yyyy ,facultatif)",
     execute(message, args) {
         (async () => {
             var username = '';
             var password = '';
             var compte = '';
-            [username,password,compte] = compteUtilisateur(message.author.id)
+            if (args[0] && global.conf.ed.accounts[args[0]]){
+                compte = args.shift()
+                username = global.conf.ed.accounts[compte]['username']
+                password = global.conf.ed.accounts[compte]['password']
+            }
+            else [username,password,compte] = compteUtilisateur(message.author.id)
             const session = new EcoleDirecte.Session(username,password);
             const account = await session.login().catch(err => {
                 console.error(`This login did not go well.`);
                 throw new Error(err);
             });
+
             if (args[0]) {
                 var date = args[0].split('-')
                 var cahierDeTexteArgs = { dates: [date[2],date[1],date[0]].join("-") }
-                var cahierDeTexte = await account.getHomework(cahierDeTexteArgs);
+                var cahierDeTexte = await account.getHomework(cahierDeTexteArgs).catch(() => {
+                    return message.reply('La date est invalide, merci de la fournir au format jj-mm-aaaa')
+                });
             }
             else var cahierDeTexte = await account.getHomework();
             
