@@ -18,7 +18,7 @@ module.exports = {
     guildOnly: false,
     memberpermissions:"VIEW_CHANNEL",
     cooldown: 5,
-    usage :'<jour/j/semaine/s> <compte> <jour-mois-année>',
+    usage :'<jour/j/semaine/s> <compte> <jour-mois-année> (arguments facultatifs)',
     // eslint-disable-next-line no-unused-vars
     execute(destination, args, compte) {
         (async () => {
