@@ -264,9 +264,13 @@ module.exports = {
 
                   colonne.push(`<div class="has-text-centered"><strong>${jourSemaine} ${calcJourMois(date)} ${traduireMoisAnnee(format(date,'MMMM'))}</strong></div>`);
                 }
-                else if (!args[0] ||args[0]=='j'||args[0] == 'jour'){
+                else if (!args[0] ||args[0]=='j'||args[0] == 'jour' || args[0].split('-').length == 3){
                   if ((args[0]=='j'||args[0] == 'jour') && args[1]){
                     var date = args[1].split('-');
+                    date = Date.parse([date[2],date[1],date[0]].join('-'));
+                  }
+                  else if(args[0].split('-').length == 3){
+                    var date = args[0].split('-');
                     date = Date.parse([date[2],date[1],date[0]].join('-'));
                   }
                   else {
@@ -313,7 +317,7 @@ module.exports = {
                     var jourCours = new Date(addHours(new Date(emploiDuTemps[c].start_date.split(" ")[0]),-2));
                   }
                   
-                  if ((!args[0] || args[0]=='j'||args[0]=='jour')||((args[0]=='s'||args[0] == 'semaine') && jourCours.getTime() == jour.getTime())) {
+                  if ((!args[0] || args[0]=='j'||args[0]=='jour'||args[0].split('-').length == 3)||((args[0]=='s'||args[0] == 'semaine') && jourCours.getTime() == jour.getTime())) {
                     if (emploiDuTemps[c+1]&& (emploiDuTemps[c].start_date == emploiDuTemps[c+1].start_date)){
                       colonne.push('<div class="columns">')
                       var coursSimultanees = true;
@@ -370,8 +374,8 @@ module.exports = {
                 html: page.join("")
               }).then((image)=>{
                 const attachment = new MessageAttachment(image)
-                if (destination.channel) destination.reply(attachment)
-                else global.client.channels.cache.get(destination).send(attachment)
+                if (destination.channel) destination.reply({files : [attachment]})
+                else global.client.channels.cache.get(destination).send({files : [attachment]})
               })
               
             });
