@@ -370,13 +370,31 @@ module.exports = {
 
               page.push(page_foot)
 
-              nodeHtmlToImage({
-                html: page.join("")
+              if (global.conf.customChromiumPath)
+              {
+                nodeHtmlToImage({
+                html: page.join(""),
+                puppeteerArgs : {
+                  headless: true,
+                  executablePath: global.conf.customChromiumPath,
+                  args: ['--no-sandbox', '--disable-setuid-sandbox']
+                }
               }).then((image)=>{
                 const attachment = new MessageAttachment(image)
                 if (destination.channel) destination.reply({files : [attachment]})
                 else global.client.channels.cache.get(destination).send({files : [attachment]})
               })
+              }
+              else {
+                nodeHtmlToImage({
+                  html: page.join("")
+                }).then((image)=>{
+                  const attachment = new MessageAttachment(image)
+                  if (destination.channel) destination.reply({files : [attachment]})
+                  else global.client.channels.cache.get(destination).send({files : [attachment]})
+              }
+                
+              )}
               
             });
             
