@@ -214,7 +214,7 @@ module.exports = {
               //Génération des colonnes de l'edt
               //Colonne de gauche (contenant les horaires)
               var colonne = [];
-              colonne.push(`<div class="column is-1"><strong> ${compte}</strong><br/><table class="table">`);
+              colonne.push(`<div class="column is-1 has-text-centered"><p style="margin-bottom: 1em;"><strong>${compte}</strong></p><table class="table">`);
               for(var c = heureDebutJournee;c <= heureFinJournee-1;c++) {
                 if (c < 10){
                   var heure = `0${c}:00`
@@ -264,7 +264,7 @@ module.exports = {
                         break;
                     }
 
-                  colonne.push(`<div class="has-text-centered"><strong>${jourSemaine} ${calcJourMois(date)} ${traduireMoisAnnee(format(date,'MMMM'))}</strong></div>`);
+                  colonne.push(`<div class="has-text-centered" style="margin-bottom: 1em;"><strong>${jourSemaine} ${calcJourMois(date)} ${traduireMoisAnnee(format(date,'MMMM'))}</strong></div>`);
                 }
                 else if (!args[0] ||args[0]=='j'||args[0] == 'jour' || args[0].split('-').length == 3){
                   if ((args[0]=='j'||args[0] == 'jour') && args[1]){
