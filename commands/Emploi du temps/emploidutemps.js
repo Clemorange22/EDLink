@@ -3,7 +3,7 @@ const EcoleDirecte = require("ecoledirecte.js");
 const request = require('request');
 const fs = require('fs')
 
-const {startOfWeek,format,addDays,compareAsc,addHours,getDay,getHours,addWeeks} = require('date-fns');
+const {startOfWeek,format,addDays,compareAsc,addHours,getDay,getHours,addWeeks, startOfDay} = require('date-fns');
 
 const { MessageAttachment } = require('discord.js')
 
@@ -38,53 +38,51 @@ module.exports = {
           }
           else [username,password] = [global.conf.ed.accounts[compte]["username"],global.conf.ed.accounts[compte]["password"]]
 
-            function calcDate(args) { // Calcul des dates de début et de fin du calendrier à demander à école directe
-                if (args[1]) {
-                    if (args[0] == "jour" || args[0] == "j") {
-                        var date = args[1].split("-");
-                        var dateDebut = [date[2],date[1],date[0]].join("-");
-                        var dateFin = dateDebut;
-                    }
-                    else if (args[0] == "semaine" || args[0] == "s") {
-                        var date = args[1].split("-");
-                        var date = Date.parse([date[2],date[1],date[0]].join("-"));
-                        var dateDebut = format(startOfWeek(date,{weekStartsOn : 1}), "yyyy'-'MM'-'dd");
-                        var dateFin = format(addDays(startOfWeek(date,{weekStartsOn : 1}),4), "yyyy'-'MM'-'dd")
-                    }
+            // Calcul des dates de début et de fin du calendrier à demander à école directe
+            if (args[1]) {
+              if (!(args[1].split('-').length == 3)){
+                if (destination.channel) return destination.reply('Format de date incorrect, veuillez utiliser le format dd-mm-aaaa !')
+                else return
+              }
+                if (args[0] == "jour" || args[0] == "j") {
+                    var date = args[1].split("-");
+                    var dateDebut = [date[2],date[1],date[0]].join("-");
+                    var dateFin = dateDebut;
                 }
-                    else {
-                      if (args[0]){
-                        if (args[0] == 'j' || args[0] == 'jour'){
-                          var dateDebut = format(Date.now(),"yyyy'-'MM'-'dd");
-                          var dateFin = dateDebut;
-                        }
-                        else if (args[0] == 's' || args[0] == 'semaine'){
-                          if (getDay(Date.now()) == 0 || getDay(Date.now()) == 6 || (getDay(Date.now()) == 5 && getHours(Date.now()) >= 18)){
-                            var dateDebut = format(startOfWeek(addWeeks(Date.now(),1),{weekStartsOn : 1}), "yyyy'-'MM'-'dd");
-                            var dateFin = format(addDays(startOfWeek(addWeeks(Date.now(),1),{weekStartsOn : 1}),4), "yyyy'-'MM'-'dd")
-                          }
-                          else {
-                            var dateDebut = format(startOfWeek(Date.now(),{weekStartsOn : 1}), "yyyy'-'MM'-'dd");
-                            var dateFin = format(addDays(startOfWeek(Date.now(),{weekStartsOn : 1}),4), "yyyy'-'MM'-'dd")
-                          }
-                        }
-                        else {
-                        var date = args[0].split("-");
-                        var dateDebut = [date[2],date[1],date[0]].join("-");
-                        var dateFin = dateDebut
-                        }
+                else if (args[0] == "semaine" || args[0] == "s") {
+                    var date = args[1].split("-");
+                    var date = Date.parse([date[2],date[1],date[0]].join("-"));
+                    var dateDebut = format(startOfWeek(date,{weekStartsOn : 1}), "yyyy'-'MM'-'dd");
+                    var dateFin = format(addDays(startOfWeek(date,{weekStartsOn : 1}),4), "yyyy'-'MM'-'dd")
+                }
+            }
+                else {
+                  if (args[0]){
+                    if (args[0] == 'j' || args[0] == 'jour'){
+                      var dateDebut = format(Date.now(),"yyyy'-'MM'-'dd");
+                      var dateFin = dateDebut;
+                    }
+                    else if (args[0] == 's' || args[0] == 'semaine'){
+                      if (getDay(Date.now()) == 0 || getDay(Date.now()) == 6 || (getDay(Date.now()) == 5 && getHours(Date.now()) >= 18)){
+                        var dateDebut = format(startOfWeek(addWeeks(Date.now(),1),{weekStartsOn : 1}), "yyyy'-'MM'-'dd");
+                        var dateFin = format(addDays(startOfWeek(addWeeks(Date.now(),1),{weekStartsOn : 1}),4), "yyyy'-'MM'-'dd")
                       }
                       else {
-                        var dateDebut = format(Date.now(),"yyyy'-'MM'-'dd");
-                        var dateFin = dateDebut;
+                        var dateDebut = format(startOfWeek(Date.now(),{weekStartsOn : 1}), "yyyy'-'MM'-'dd");
+                        var dateFin = format(addDays(startOfWeek(Date.now(),{weekStartsOn : 1}),4), "yyyy'-'MM'-'dd")
                       }
                     }
-
-                return [dateDebut, dateFin]
-            }
-            var dates = calcDate(args);
-            var dateDebut = dates[0];
-            var dateFin = dates[1];
+                    else {
+                    var date = args[0].split("-");
+                    var dateDebut = [date[2],date[1],date[0]].join("-");
+                    var dateFin = dateDebut
+                    }
+                  }
+                  else {
+                    var dateDebut = format(Date.now(),"yyyy'-'MM'-'dd");
+                    var dateFin = dateDebut;
+                  }
+                }
 
             const session = new EcoleDirecte.Session(username,password);
             const account = await session.login().catch(err => {
@@ -113,11 +111,15 @@ module.exports = {
             };
             request(options, function (error, response) {
               if (error) {console.log(error);
-              return destination.reply(`La récupération des données auprès d'école directe a échouée, assurez vous d'utiliser la commande correctement "${global.conf.discord.prefix}emploidutemps <jour/j/semaine/s> <jour-mois-année>".\n Sinon, vérifiez les paramètres de connexion du bot.`)
+              return destination.reply(`La récupération des données auprès d'école directe a échouée, assurez vous d'utiliser la commande correctement "${global.conf.discord.prefix}emploidutemps <jour/j/semaine/s> <compte> <jour-mois-année> (arguments facultatifs)".\n Sinon, vérifiez les paramètres de connexion du bot.`)
               }
               var emploiDuTemps = JSON.parse(response.body).data;
-              if (!emploiDuTemps) return destination.reply(`La récupération des données auprès d'école directe a échouée, assurez vous d'utiliser la commande correctement "${global.conf.discord.prefix}emploidutemps <jour/j/semaine/s> <jour-mois-année>".\n Sinon, vérifiez les paramètres de connexion du bot.`)
-              if (!emploiDuTemps[0] && destination.channel) return destination.reply('Aucun cours dans cette période ! :partying_face:')
+              if (!emploiDuTemps) return destination.reply(`La récupération des données auprès d'école directe a échouée, assurez vous d'utiliser la commande correctement "${global.conf.discord.prefix}emploidutemps <jour/j/semaine/s> <compte> <jour-mois-année> (arguments facultatifs)".\n Sinon, vérifiez les paramètres de connexion du bot.`)
+              if ((!emploiDuTemps[0]) && destination.channel){
+                if (args[1]) return destination.reply('Aucun cours dans cette période ! :partying_face:')
+                else if(args[0]=='j') return destination.reply('Aucun cours aujourd\'hui ! :partying_face:')
+                else if (args[0]=='s') return destination.reply('Aucun cours cette semaine ! :partying_face:')
+              }
               else if(!emploiDuTemps[0]){
                 if(args[0]=='j') return global.client.channels.cache.get(destination).send('Aucun cours aujourd\'hui ! :partying_face:')
                 else if (args[0]=='s') return global.client.channels.cache.get(destination).send('Aucun cours cette semaine ! :partying_face:')
@@ -311,10 +313,13 @@ module.exports = {
                       date = Date.parse([date[2],date[1],date[0]].join('-'));
                     }
                     else {
-                      var date = Date.now()
+                      if(getDay(Date.now()) == 0 || getDay(Date.now()) == 6 || (getDay(Date.now()) == 5 && getHours(Date.now()) >= 18)){
+                        var date = startOfWeek(addWeeks(Date.now(),1),{weekStartsOn : 1})
+                      }
+                      else var date = startOfWeek(Date.now(),{weekStartsOn : 1})
                     }
                     var jour = new Date(addDays(startOfWeek(date,{weekStartsOn : 1}),j));
-                    var jourCours = new Date(addHours(new Date(emploiDuTemps[c].start_date.split(" ")[0]),-2));
+                    var jourCours = new Date(startOfDay(new Date(emploiDuTemps[c].start_date.split(" ")[0])));
                   }
                   
                   if ((!args[0] || args[0]=='j'||args[0]=='jour'||args[0].split('-').length == 3)||((args[0]=='s'||args[0] == 'semaine') && jourCours.getTime() == jour.getTime())) {
