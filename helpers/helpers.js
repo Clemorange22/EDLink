@@ -52,7 +52,7 @@ module.exports = {
                     }
                 }
                 var msg = []
-                if (coursModifies.length != 0 || coursAnnules.lenght !=0) {
+                if (coursModifies.length != 0 || coursAnnules.length !=0) {
                     msg.push(`**Modifications d'emploi du temps pour le compte ${compte}:**\n`)
                     if (coursAnnules.lenght != 0) {
                         msg.push('Cours annulés :\n')
