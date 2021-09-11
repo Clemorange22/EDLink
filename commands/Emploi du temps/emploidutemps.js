@@ -3,7 +3,7 @@ const EcoleDirecte = require("ecoledirecte.js");
 const request = require('request');
 const fs = require('fs')
 
-const {startOfWeek,format,addDays,compareAsc,addHours,getDay,getHours,addWeeks, startOfDay} = require('date-fns');
+const {startOfWeek,format,addDays,compareAsc,getDay,getHours,addWeeks, startOfDay} = require('date-fns');
 
 const { MessageAttachment } = require('discord.js')
 
