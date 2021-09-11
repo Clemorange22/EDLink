@@ -214,8 +214,8 @@ module.exports = {
               //Génération des colonnes de l'edt
               //Colonne de gauche (contenant les horaires)
               var colonne = [];
-              colonne.push(`<div class="column is-1"><strong>${compte}</strong><br/><table class="table">`);
-              for(var c = heureDebutJournee;c <= heureFinJournee;c++) {
+              colonne.push(`<div class="column is-1"><strong> ${compte}</strong><br/><table class="table">`);
+              for(var c = heureDebutJournee;c <= heureFinJournee-1;c++) {
                 if (c < 10){
                   var heure = `0${c}:00`
                 }
@@ -323,6 +323,9 @@ module.exports = {
                   }
                   
                   if ((!args[0] || args[0]=='j'||args[0]=='jour'||args[0].split('-').length == 3)||((args[0]=='s'||args[0] == 'semaine') && jourCours.getTime() == jour.getTime())) {
+                    if ((emploiDuTemps[c].start_date.split(' ')[1].split(':')[0] == heureDebutJournee && emploiDuTemps[c].start_date.split(' ')[1].split(':')[1] != '00') && ((!emploiDuTemps[c-1]) || emploiDuTemps[c-1].start_date.split(' ')[1].split(':')[0] != heureDebutJournee)){//ajoute un espace dans l'edt la journée démarre plus tard que la journée qui démarre le plus tôt
+                      colonne.push(`<div style="height:${100/(heureFinJournee-heureDebutJournee)*(parseInt(emploiDuTemps[c].start_date.split(' ')[1].split(':')[1])/60)}%"></div>`)
+                    }
                     if (emploiDuTemps[c+1]&& (emploiDuTemps[c].start_date == emploiDuTemps[c+1].start_date)){
                       colonne.push('<div class="columns">')
                       var coursSimultanees = true;
@@ -337,7 +340,7 @@ module.exports = {
                         var lineBreak = "<br/>"
                       }
                       else {
-                        var lineBreak = ""
+                        var lineBreak = " "
                       }
                       if (emploiDuTemps[c].isAnnule) var statutCours = '<p class="is-size-6	has-text-centered" style="padding:0;margin:0;"><strong>ANNULÉ</strong></p>'
                       else if (emploiDuTemps[c].isModifie) var statutCours = '<p class="is-size-6	has-text-centered" style="padding:0;margin:0;"><strong>MODIFIÉ</strong></p>'
