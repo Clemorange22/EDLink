@@ -46,7 +46,7 @@ module.exports = {
                 var coursAnnules = []
                 var coursModifies = []
                 for (let cours of edt) {
-                    if (!global.alertesConf[channel].alertesEffectues.some(coursEnregistre => coursEnregistre.id == cours.id)) {
+                    if (global.alertesConf[channel] && global.alertesConf[channel].alertesEffectues && !global.alertesConf[channel].alertesEffectues.some(coursEnregistre => coursEnregistre.id == cours.id)) {
                         if (cours.isAnnule) coursAnnules.push(cours)
                         else if (cours.isModifie) coursModifies.push(cours)
                     }
@@ -83,8 +83,10 @@ module.exports = {
                         channelToSend.send(messageToSend)
                     }
                 }
-                for (let coursEnregistre of global.alertesConf[channel].alertesEffectues){
-                    if (isPast(Date.parse(coursEnregistre.end_date))) delete global.alertesConf[channel].alertesEffectues[Array.prototype.indexOf.call(global.alertesConf[channel].alertesEffectues,coursEnregistre)]
+                if (global.alertesConf[channel] && global.alertesConf[channel].alertesEffectues) {
+                    for (let coursEnregistre of global.alertesConf[channel].alertesEffectues){
+                        if (isPast(Date.parse(coursEnregistre.end_date))) delete global.alertesConf[channel].alertesEffectues[Array.prototype.indexOf.call(global.alertesConf[channel].alertesEffectues,coursEnregistre)]
+                    }
                 }
                 saveAlertesConf(JSON.stringify(global.alertesConf))
             })
