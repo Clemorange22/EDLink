@@ -116,9 +116,10 @@ module.exports = {
               var emploiDuTemps = JSON.parse(response.body).data;
               if (!emploiDuTemps) return destination.reply(`La récupération des données auprès d'école directe a échouée, assurez vous d'utiliser la commande correctement "${global.conf.discord.prefix}emploidutemps <jour/j/semaine/s> <compte> <jour-mois-année> (arguments facultatifs)".\n Sinon, vérifiez les paramètres de connexion du bot.`)
               if ((!emploiDuTemps[0]) && destination.channel){
-                if (args[1]) return destination.reply('Aucun cours dans cette période ! :partying_face:')
-                else if(args[0]=='j') return destination.reply('Aucun cours aujourd\'hui ! :partying_face:')
+                if(args[0]=='j') return destination.reply('Aucun cours aujourd\'hui ! :partying_face:')
                 else if (args[0]=='s') return destination.reply('Aucun cours cette semaine ! :partying_face:')
+                else if (!args[0]) return destination.reply('Aucun cours aujourd\'hui ! :partying_face:')
+                else return destination.reply('Aucun cours dans cette période ! :partying_face:')
               }
               else if(!emploiDuTemps[0]){
                 if(args[0]=='j') return global.client.channels.cache.get(destination).send('Aucun cours aujourd\'hui ! :partying_face:')
