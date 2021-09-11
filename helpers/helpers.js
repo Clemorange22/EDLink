@@ -18,8 +18,8 @@ function saveAlertesConf(newConf){
 module.exports = {
     createAlerteTask(compte,channel,mention){ //Crée la tâche alertant toutes les 10 minutes si un cours est modifié / annulé
         return cron.schedule('*/10 * * * *',async () =>{
-            const session = new EcoleDirecte.session()
-            const account = await session.login(global.conf.ed.accounts[compte]["username"],global.conf.ed.accounts[compte]["password"])
+            const session = new EcoleDirecte.Session(global.conf.ed.accounts[compte]["username"],global.conf.ed.accounts[compte]["password"])
+            const account = await session.login()
             var options = {
                 'method': 'POST',
                 'url': `https://api.ecoledirecte.com/v3/${account._raw.typeCompte}/${account.edId}/emploidutemps.awp?verbe=get&`,
