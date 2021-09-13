@@ -272,7 +272,7 @@ module.exports = {
                     var date = args[1].split('-');
                     date = Date.parse([date[2],date[1],date[0]].join('-'));
                   }
-                  else if(args[0].split('-').length == 3){
+                  else if(args[0] && args[0].split('-').length == 3){
                     var date = args[0].split('-');
                     date = Date.parse([date[2],date[1],date[0]].join('-'));
                   }
