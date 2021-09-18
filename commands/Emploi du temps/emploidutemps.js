@@ -19,24 +19,28 @@ module.exports = {
     memberpermissions:"VIEW_CHANNEL",
     cooldown: 5,
     usage :'<jour/j/semaine/s> <compte> <jour-mois-année> (arguments facultatifs)',
-    // eslint-disable-next-line no-unused-vars
-    execute(destination, args, compte) {
+
+    execute(destination, args,compte) {
         (async () => {
           if (!compte) {
             if (args[0] && global.conf.ed.accounts[args[0]]){
               compte = args.shift()
-              username = global.conf.ed.accounts[compte]['username']
-              password = global.conf.ed.accounts[compte]['password']
+              var username = global.conf.ed.accounts[compte]['username']
+              var password = global.conf.ed.accounts[compte]['password']
             }
             else if (args[1] && global.conf.ed.accounts[args[1]]){
               compte = args[1]
               args.splice(1,1)
-              username = global.conf.ed.accounts[compte]['username']
-              password = global.conf.ed.accounts[compte]['password']
+              var username = global.conf.ed.accounts[compte]['username']
+              var password = global.conf.ed.accounts[compte]['password']
             }
-            else var [username,password,compte] = compteUtilisateur(destination.author.id)
+            else {
+              let credentials = [username,password,compte] = compteUtilisateur(destination.author.id)
+              var [username,password] = [credentials[0],credentials[1]]
+              compte = credentials[2]
+            }
           }
-          else [username,password] = [global.conf.ed.accounts[compte]["username"],global.conf.ed.accounts[compte]["password"]]
+          else var [username,password] = [global.conf.ed.accounts[compte]["username"],global.conf.ed.accounts[compte]["password"]]
 
             // Calcul des dates de début et de fin du calendrier à demander à école directe
             if (args[1]) {
