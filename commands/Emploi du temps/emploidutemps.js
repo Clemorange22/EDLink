@@ -383,7 +383,6 @@ module.exports = {
 
               page.push(page_foot)
 
-              if (global.conf.debugMode) console.log(page.join(""))
               if (global.conf.customChromiumPath)
               {
                 nodeHtmlToImage({
