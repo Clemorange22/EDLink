@@ -45,8 +45,10 @@ module.exports = {
                 var edt = JSON.parse(response.body).data;
                 var coursAnnules = []
                 var coursModifies = []
+                if (!global.alertesConf[channel]) global.alertesConf[channel] = {}
+                if (!global.alertesConf[channel].alertesEffectues) global.alertesConf[channel].alertesEffectues = []
                 for (let cours of edt) {
-                    if (global.alertesConf[channel] && global.alertesConf[channel].alertesEffectues && !global.alertesConf[channel].alertesEffectues.some(coursEnregistre => coursEnregistre.id == cours.id)) {
+                    if ((!global.alertesConf[channel].alertesEffectues.some(coursEnregistre => coursEnregistre.id == cours.id))) {
                         if (cours.isAnnule) coursAnnules.push(cours)
                         else if (cours.isModifie) coursModifies.push(cours)
                     }
