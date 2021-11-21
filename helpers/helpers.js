@@ -61,7 +61,7 @@ module.exports = {
                         for (let cours of coursAnnules) {
                             let date = cours.start_date.split(' ')[0]
                             let heure = cours.start_date.split(' ')[1]
-                            msg.push(`${cours.matiere} le ${date.split('-').join('/')} à ${heure.split(':').join('h')}\n`)
+                            msg.push(`${cours.matiere} le ${date.split('-').reverse().join('/')} à ${heure.split(':').join('h')}\n`)
                             if (!global.alertesConf[channel].alertesEffectues) global.alertesConf[channel].alertesEffectues = []
                             global.alertesConf[channel].alertesEffectues.push(cours)
                         }
@@ -71,7 +71,7 @@ module.exports = {
                         for (let cours of coursModifies) {
                             let date = cours.start_date.split(' ')[0]
                             let heure = cours.start_date.split(' ')[1]
-                            msg.push(`Le cours ${cours.matiere} du ${date.split('-').join('/')} aura lieu à ${heure.split(':').join('h')}\n`)
+                            msg.push(`Le cours ${cours.matiere} du ${date.split('-').reverse().join('/')} aura lieu à ${heure.split(':').join('h')}\n`)
                             if (!global.alertesConf[channel].alertesEffectues) global.alertesConf[channel].alertesEffectues = []
                             global.alertesConf[channel].alertesEffectues.push(cours)
                         }
