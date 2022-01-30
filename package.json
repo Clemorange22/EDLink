@@ -2,18 +2,18 @@
   "name": "edlink",
   "version": "0.9.3",
   "description": "A discord bot for école directe",
-  "homepage": "https://git.dynacloud.ynh.fr/cboittin/EDLink",
+  "homepage": "https://github.com/Clemorange22/EDLink",
   "bugs": {
-    "url": "https://git.dynacloud.ynh.fr/cboittin/EDLink/issues"
+    "url": "https://github.com/Clemorange22/EDLink/issues"
   },
   "author": {
     "name": "Clément Boittin",
-    "email": "clemorange22@gmail.com"
+    "email": "clement.boittin@protonmail.com"
   },
   "license": "GPL-3.0-only",
   "repository": {
     "type": "git",
-    "url": "https://git.dynacloud.ynh.fr/cboittin/EDLink.git"
+    "url": "https://github.com/Clemorange22/EDLink.git"
   },
   "dependencies": {
     "bufferutil": "^4.0.3",
