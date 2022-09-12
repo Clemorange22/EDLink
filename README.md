@@ -19,6 +19,9 @@ Je ne suis en aucun cas responsable de votre utilisation de votre compte école 
 1. Clonez ce dépôt avec git clone ou bien téléchargez-le en .zip
 2. Exécutez la commande npm install . dans le dossier (Node.js requis)
 3. Copiez-Collez le fichier conf-model.json, complétez-le puis renommez le en conf.json
+
+⚠️ **Important** : Vous devez activer l'option "message content inetent" dans le panel développeur de discord pour que le bot fonctionne !
+
 4. Lancez le bot avec node ./index.js
 5. Votre bot est en ligne 🥳
 
