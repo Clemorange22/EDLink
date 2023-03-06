@@ -1,20 +1,19 @@
 {
-    "discord" : {
-        "token":"token",
-        "prefix":"ed "
+  "discord": {
+    "token": "token",
+    "prefix": "ed "
+  },
+  "ed": {
+    "accounts": {
+      "nom du compte 1, sans espaces": {
+        "username": "nom d'utilisateur école directe compte 1",
+        "password": "mot de passe école directe compte 1"
+      },
+      "nom du compte 2, sans espaces": {
+        "username": "nom d'utilisateur école directe compte 2",
+        "password": "mot de passe école directe compte 2"
+      }
     },
-    "ed" : {
-        "accounts" : {
-            "nom du compte 1, sans espaces" : {
-                "username" : "nom d'utilisateur école directe compte 1",
-                "password" : "mot de passe école directe compte 1"
-            },
-            "nom du compte 2, sans espaces" : {
-                "username" : "nom d'utilisateur école directe compte 2",
-                "password" : "mot de passe école directe compte 2"
-            }
-        },
-        "defaultAccount" : "nom du compte par défault"
-        
-    }
+    "defaultAccount": "nom du compte par défault"
+  }
 }
